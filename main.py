@@ -1,1 +1,2 @@
-print("hello lee boseong");
+print("hello lee boseong")
+print("my class")
