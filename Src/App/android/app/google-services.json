@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "358036639779",
+    "project_id": "ossproj-comfyride",
+    "storage_bucket": "ossproj-comfyride.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358036639779:android:fe10abe0d875856a346196",
+        "android_client_info": {
+          "package_name": "com.example.ossproj_comfyride"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKfAD9spPQ1xAEaEjG3tyu9CmENPskjFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
