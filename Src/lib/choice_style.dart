@@ -5,9 +5,12 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:ossproj_comfyride/explain_FTTI.dart';
+import 'package:ossproj_comfyride/Login_Screen.dart';
+import 'package:ossproj_comfyride/ftti.dart';
 
 class Choice_Style extends StatefulWidget {
-  const Choice_Style({super.key});
+  final String uid;
+  Choice_Style({required this.uid, super.key});
 
   @override
   State<Choice_Style> createState() => _Choice_Style();
@@ -15,14 +18,36 @@ class Choice_Style extends StatefulWidget {
 
 class _Choice_Style extends State<Choice_Style> {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  List<String> list_ = <String>[];
+  List<Map<String, dynamic>> _imageList = <Map<String, dynamic>>[];
   List<bool> bool_Grid = [];
   bool isLoading = false; // 로딩 상태 추적
-  var count2 = false;
-  var count1 = 0;
+  bool isDone = false; //스타일 선택 완료 여부
+  var count = 0;
+  List<Map<String, dynamic>> _userSelectCode = <Map<String, dynamic>>[];
 
   @override
   void initState() {
+    _loadData();
+    _choiceShoweDialog();
+    super.initState();
+  }
+
+  Future<void> _loadData() async {
+    if (isLoading) return; // 이미 로딩 중이면 중복 실행 방지
+    setState(() => isLoading = true);
+    var querySnapshot = await db.collection("data_real").get();
+    List<Map<String, dynamic>> _newList = [];
+
+    for (var doc in querySnapshot.docs) {
+      _newList.add({'id': doc.id, 'img': doc['img'], 'code': doc['code']});
+      bool_Grid.add(false);
+    }
+    setState(() {
+      _imageList = _newList;
+    });
+  }
+
+  void _choiceShoweDialog() {
     Future.delayed(const Duration(milliseconds: 10), () {
       showDialog(
         context: context,
@@ -56,25 +81,36 @@ class _Choice_Style extends State<Choice_Style> {
         },
       );
     });
-
-    print('2');
-    _loadData();
-    super.initState();
   }
 
-  Future<void> _loadData() async {
-    if (isLoading) return; // 이미 로딩 중이면 중복 실행 방지
-    setState(() => isLoading = true);
-    var querySnapshot = await db.collection("data_real").get();
-    List<String> newList = [];
-
-    for (var doc in querySnapshot.docs) {
-      newList.add(doc['img']);
-      bool_Grid.add(false);
-    }
-    setState(() {
-      list_ = newList;
-      isLoading = false;
+  void _explainShowDialog() {
+    Future.delayed(const Duration(milliseconds: 3000), () {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return GiffyDialog.image(
+            Image.network(
+              "https://raw.githubusercontent.com/Shashank02051997/FancyGifDialog-Android/master/GIF's/gif16.gif",
+              height: 300,
+              fit: BoxFit.cover,
+            ),
+            title: Text(
+              '나만의 FTTI 생성이\n완료 됐습니다.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  '보러가기',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          );
+        },
+      );
     });
   }
 
@@ -118,7 +154,7 @@ class _Choice_Style extends State<Choice_Style> {
               children: [
                 SizedBox(height: 10),
                 Text(
-                  '취향에 맞는 옷을 선택해주세요\n ${count1.toString()}/10개',
+                  '취향에 맞는 옷을 선택해주세요\n ${count.toString()}/10개',
                   style: TextStyle(fontSize: 20),
                   textAlign: TextAlign.center,
                 ),
@@ -129,14 +165,14 @@ class _Choice_Style extends State<Choice_Style> {
             Positioned.fill(
               child: Align(
                 alignment: Alignment.center,
-                child: count2
+                child: isDone
                     ? SizedBox(
                         width: 100,
                         height: 100,
                         child: CircularProgressIndicator())
                     : Container(),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -144,14 +180,14 @@ class _Choice_Style extends State<Choice_Style> {
   }
 
   Widget grid_generator() {
-    if (list_.isEmpty) {
+    if (_imageList.isEmpty) {
       // list_가 비어 있는지 확인
       return Center(child: CircularProgressIndicator()); // 로딩 인디케이터 표시
     }
     return MasonryGridView.builder(
       gridDelegate:
           SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemCount: list_.length, // itemCount를 list_의 길이로 설정
+      itemCount: _imageList.length, // itemCount를 list_의 길이로 설정
       mainAxisSpacing: 8,
       crossAxisSpacing: 8,
       itemBuilder: (context, index) {
@@ -159,40 +195,29 @@ class _Choice_Style extends State<Choice_Style> {
             onTap: () {
               // 탭되었을 때 실행할 코드를 여기에 추가합니다.
               setState(() {
-                count1++;
-
-                if (count1 == 10) {
+                if (count < 10) {
+                  if (bool_Grid[index] == false) {
+                    bool_Grid[index] = true;
+                    _userSelectCode.add({
+                      'img_id': _imageList[index]['id'],
+                      'code': _imageList[index]['code'],
+                    });
+                    count++;
+                  } else {
+                    bool_Grid[index] = false;
+                    _userSelectCode.removeWhere(
+                        (item) => item['img_id'] == _imageList[index]['id']);
+                    count--;
+                  }
+                }
+                if (count == 10) {
                   setState(() {
-                    count2 = true;
-                  });
+                    _saveUserSelection();
+                    _explainShowDialog();
+                    FTTI(widget.uid);
 
-                  Future.delayed(const Duration(milliseconds: 3000), () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return GiffyDialog.image(
-                          Image.network(
-                            "https://raw.githubusercontent.com/Shashank02051997/FancyGifDialog-Android/master/GIF's/gif16.gif",
-                            height: 300,
-                            fit: BoxFit.cover,
-                          ),
-                          title: Text(
-                            '나만의 FTTI 생성이\n완료 됐습니다.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text(
-                                '보러가기',
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                    // 비동기 함수 호출을 별도의 함수로 분리
+                    _callFTTI();
                   });
 
                   Future.delayed(const Duration(milliseconds: 3500), () {
@@ -202,9 +227,6 @@ class _Choice_Style extends State<Choice_Style> {
                             builder: (context) => explain_FTTI()));
                   });
                 }
-                print(bool_Grid[index]);
-                bool_Grid[index] = !bool_Grid[index];
-                print(bool_Grid[index]);
               });
             },
             child: ClipRRect(
@@ -212,9 +234,10 @@ class _Choice_Style extends State<Choice_Style> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
+                    //이미지 선택시 효과
                     Opacity(
                       opacity: bool_Grid[index] ? 0.3 : 1,
-                      child: Image.network(list_[index]),
+                      child: Image.network(_imageList[index]['img']),
                     ),
                     bool_Grid[index]
                         ? Container(
@@ -229,5 +252,39 @@ class _Choice_Style extends State<Choice_Style> {
                 )));
       },
     );
+  }
+
+  Future<void> _callFTTI() async {
+    await FTTI(widget.uid).findAndPrintBestCode();
+  }
+
+  //firestore에 user별 선택한 스타일 추가
+  Future<void> _saveUserSelection() async {
+    List<String> selectedCodes =
+        _userSelectCode.map((item) => item['code'] as String).toList();
+
+    // 각 코드별 개수를 계산하기 위한 맵 초기화
+    Map<String, int> codeCountMap = {'o': 0, 'c': 0, 'f': 0};
+
+    // selectedCodes 리스트를 순회하며 각 코드의 개수를 증가시킴
+    for (String code in selectedCodes) {
+      if (codeCountMap.containsKey(code)) {
+        codeCountMap[code] = codeCountMap[code]! + 1;
+      }
+    }
+
+    // 결과를 원하는 형식으로 출력
+    Map<String, int> result = {
+      'f': codeCountMap['f']!,
+      'o': codeCountMap['o']!,
+      'c': codeCountMap['c']!
+    };
+    //DB에 내용 반영
+    await db.collection('users').doc(widget.uid).update({
+      'selected_codes': selectedCodes,
+      'code_count': result,
+    });
+
+    print(result);
   }
 }

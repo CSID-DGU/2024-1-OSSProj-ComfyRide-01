@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ossproj_comfyride/choice_style.dart';
+import 'package:ossproj_comfyride/ftti.dart';
 
 class Login_Screen extends StatefulWidget {
   const Login_Screen({super.key});
@@ -12,6 +13,8 @@ class Login_Screen extends StatefulWidget {
 }
 
 class _Login_ScreenState extends State<Login_Screen> {
+  String _uid = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +66,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                     await addUser(userCredential!);
 
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const Choice_Style(),
+                      builder: (context) => Choice_Style(uid: _uid),
                     ));
                   },
                   style: ElevatedButton.styleFrom(
@@ -96,64 +99,67 @@ class _Login_ScreenState extends State<Login_Screen> {
       ),
     );
   }
-}
 
-Future<UserCredential?> signInWithGoogle() async {
-  try {
-    // Trigger the authentication flow (구글 로그인 요청)
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      // Trigger the authentication flow (구글 로그인 요청)
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    if (googleUser == null) {
-      print('Google 로그인이 취소되었습니다.');
+      if (googleUser == null) {
+        print('Google 로그인이 취소되었습니다.');
+        return null;
+      }
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in with Firebase
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // Get the Firebase UID
+      _uid = userCredential.user?.uid ?? "UID not available";
+
+      // Print the Firebase UID to the console
+      print('Firebase UID: $_uid');
+
+      // Return the UserCredential
+      return userCredential;
+    } catch (e) {
+      print('error: $e');
       return null;
     }
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Sign in with Firebase
-    final UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-
-    // Get the Firebase UID
-    final String uid = userCredential.user?.uid ?? "UID not available";
-
-    // Print the Firebase UID to the console
-    print('Firebase UID: $uid');
-
-    // Return the UserCredential
-    return userCredential;
-  } catch (e) {
-    print('error: $e');
-    return null;
   }
-}
 
-Future<void> addUser(UserCredential userCredential) async {
-  try {
-    // Get the Firebase UID
-    final String uid = userCredential.user?.uid ?? "UID not available";
+  Future<void> addUser(UserCredential userCredential) async {
+    try {
+      // Get the Firebase UID
+      _uid = userCredential.user?.uid ?? "UID not available";
 
-    // UID를 문서 ID로 설정하여 문서 생성
-    final userDocRef = FirebaseFirestore.instance.collection('users').doc(uid);
+      // UID를 문서 ID로 설정하여 문서 생성
+      final userDocRef =
+          FirebaseFirestore.instance.collection('users').doc(_uid);
 
-    // Firestore 문서에 저장할 user Data
-    final userData = {
-      'uid': uid,
-    };
+      // Firestore 문서에 저장할 user Data
+      final userData = {
+        'uid': _uid,
+        'selected_codes': '',
+        'FTTI': '',
+      };
 
-    // Firestore 문서에 사용자 데이터를 설정
-    await userDocRef.set(userData);
+      // Firestore 문서에 사용자 데이터를 설정
+      await userDocRef.set(userData);
 
-    print('sucess add user id!');
-  } catch (e) {
-    print('error: $e');
+      print('sucess add user id!');
+    } catch (e) {
+      print('error: $e');
+    }
   }
 }
