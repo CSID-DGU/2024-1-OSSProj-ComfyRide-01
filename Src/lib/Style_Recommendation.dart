@@ -30,7 +30,6 @@ class _StyleRecommendation extends State<StyleRecommendation> {
         'link': doc['link'],
       };
       newList.add(newItem);
-      print('test : $newList');
     }
     setState(() {
       list_ = newList;

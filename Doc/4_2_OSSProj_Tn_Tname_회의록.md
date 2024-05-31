@@ -211,3 +211,4 @@
 ### 회의사진
 <img src="./imgs/meeting_0621.png" alt="회의사진" width="500">
 
+[:point_right:__*README로 돌아가기*__](../README.md)
