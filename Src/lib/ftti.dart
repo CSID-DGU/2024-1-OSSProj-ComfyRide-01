@@ -1,13 +1,14 @@
-import 'dart:io';
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:csv/csv.dart';
-import 'package:flutter/services.dart';
 
 class FTTI {
-  final String uid;
+  final String? uid;
+  double bestF = 0;
+  double bestO = 0;
+  double bestC = 0;
 
-  FTTI(this.uid);
+  FTTI({required this.uid});
 
   FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -44,55 +45,24 @@ class FTTI {
     double minDifference = double.infinity;
     String bestCode = '';
 
-    // Check if fields and ratios are properly initialized
-    if (fields.isEmpty) {
-      print('Error: fields list is empty');
-      return bestCode;
-    }
-    if (ratios.isEmpty) {
-      print('Error: ratios map is empty');
-      return bestCode;
-    }
-
     // Skip the header and process data rows
     for (var row in fields.skip(1)) {
       try {
-        // Ensure row has enough elements
-        if (row.length < 4) {
-          print('Error: row does not have enough elements - $row');
-          continue;
-        }
-
-        // Extract values
-        int codeIndex = row.length - 1;
-        String code = row[codeIndex].toString().trim();
-
-        // Check if code is empty and handle it
-        if (code.isEmpty) {
-          print('Error: code is empty for row - $row');
-          // Optionally, you could skip this row or assign a default code
-          // code = 'default_code'; // Uncomment to use a default code
-          continue; // Skip this row
-        }
-
         double f = parseDouble(row[0]);
         double o = parseDouble(row[1]);
         double c = parseDouble(row[2]);
+        String code = row[3].toString().trim();
 
-        print('Processing row: f=$f, o=$o, c=$c, code=$code');
-
-        // Calculate difference
         double difference = (ratios['f']! - f) * (ratios['f']! - f) +
             (ratios['o']! - o) * (ratios['o']! - o) +
             (ratios['c']! - c) * (ratios['c']! - c);
 
-        print('Calculated difference: $difference');
-
-        // Update best code
         if (difference < minDifference) {
           minDifference = difference;
           bestCode = code;
-          print('New best code: $bestCode with difference: $minDifference');
+          bestF = f;
+          bestO = o;
+          bestC = c;
         }
       } catch (e) {
         print('Error parsing row: $row. Error: $e');
@@ -100,7 +70,7 @@ class FTTI {
       }
     }
 
-    print('Best matching code: $bestCode');
+    print('Best f: $bestF, Best o: $bestO, Best c: $bestC');
     return bestCode;
   }
 
@@ -121,17 +91,21 @@ class FTTI {
   }
 
   // 5. 가장 작은 제곱합을 가지는 행의 코드를 출력
-  Future<void> findAndPrintBestCode() async {
+  Future<Map<String, double>> findAndGetBestCode() async {
     Map<String, int> selectedResult = await getUserSelectedResult();
     Map<String, double> ratios = calculateRatios(selectedResult);
     List<List<dynamic>> fields = await readCSV('assets/ftti.csv');
     String bestCode = findBestCode(fields, ratios);
-    print('Best matching code: $bestCode');
 
-    //유저별 FTTI DB에 추가
+    // 유저별 FTTI DB에 추가
     await db.collection('users').doc(uid).update({
       'FTTI': bestCode,
     });
-    print('Add user FTTI success!');
+
+    return {
+      'bestF': bestF,
+      'bestO': bestO,
+      'bestC': bestC,
+    };
   }
 }

@@ -1,10 +1,27 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StyleRecommendation extends StatefulWidget {
-  const StyleRecommendation({super.key});
+  final String uid;
+  final String FTTI_eng;
+  final String FTTI_kor;
+  final double bestF;
+  final double bestO;
+  final double bestC;
+
+  StyleRecommendation({
+    required this.uid,
+    required this.FTTI_eng,
+    required this.FTTI_kor,
+    required this.bestF,
+    required this.bestO,
+    required this.bestC,
+    super.key,
+  });
+
   @override
   State<StyleRecommendation> createState() => _StyleRecommendation();
 }
@@ -13,6 +30,7 @@ class _StyleRecommendation extends State<StyleRecommendation> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<Map<String, dynamic>> list_ = [];
   bool isLoading = false; // 로딩 상태 추적
+
   @override
   void initState() {
     super.initState();
@@ -22,22 +40,63 @@ class _StyleRecommendation extends State<StyleRecommendation> {
   Future<void> _loadData() async {
     if (isLoading) return; // 이미 로딩 중이면 중복 실행 방지
     setState(() => isLoading = true);
-    var querySnapshot = await db.collection("data_real").get();
+
+    // 전달받은 bestF, bestO, bestC 값을 사용
+    double f = widget.bestF;
+    double o = widget.bestO;
+    double c = widget.bestC;
+
     List<Map<String, dynamic>> newList = [];
-    for (var doc in querySnapshot.docs) {
-      Map<String, dynamic> newItem = {
-        'img': doc['img'],
-        'link': doc['link'],
-      };
-      newList.add(newItem);
-    }
+
+    // 각 비율에 맞게 데이터를 가져옴
+    newList.addAll(await _getDataByRatio('f', f));
+    newList.addAll(await _getDataByRatio('o', o));
+    newList.addAll(await _getDataByRatio('c', c));
+
+    print('총 이미지 개수: ${newList.length}');
+    print('f: $f');
+    print('o: $o');
+    print('c: $c');
+
     setState(() {
       list_ = newList;
       isLoading = false;
     });
   }
 
-  // @override
+  Future<List<Map<String, dynamic>>> _getDataByRatio(
+      String code, double ratio) async {
+    var querySnapshot = await db.collection("data_real").get();
+
+    // code에 따라 데이터를 필터링
+    List<Map<String, dynamic>> filteredDataList = querySnapshot.docs
+        .where((doc) => doc['code'] == code)
+        .map((doc) => {
+              'img': doc['img'],
+              'link': doc['link'],
+              'code': doc['code'],
+            })
+        .toList();
+
+    int totalFilteredDocs = filteredDataList.length;
+    int count = (totalFilteredDocs * ratio).round();
+
+    List<Map<String, dynamic>> selectedData = [];
+
+    // 비율에 맞게 데이터를 선택
+    for (int i = 0; i < count; i++) {
+      selectedData.add(filteredDataList[i % totalFilteredDocs]);
+    }
+
+    // code 필드를 콘솔에 출력
+    for (var data in selectedData) {
+      print('Code: ${data['code']}');
+    }
+
+    return selectedData;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -74,8 +133,9 @@ class _StyleRecommendation extends State<StyleRecommendation> {
               children: [
                 SizedBox(height: 10),
                 Text(
-                  "편한게 좋은 프로페셔널 직장인(O5C4F1)' 유형의\n길동님 맞춤 패션 추천", //임시 텍스트
-                  style: TextStyle(fontSize: 15), textAlign: TextAlign.center,
+                  "'${widget.FTTI_kor}(${widget.FTTI_eng})' 맞춤 패션 추천", // 임시 텍스트
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 20),
                 Expanded(
