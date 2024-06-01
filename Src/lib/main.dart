@@ -32,12 +32,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-//   Stream<QuerySnapshot> _commentStream() {
-//     stopTrigger +=1;
-//     if(stopTrigger == 2 ){
-//       return unchanging;
-//
-//   }
-// }

@@ -62,7 +62,6 @@
 - 머신 러닝 API : 사전 패션 유형 별로 학습 시킨 API
 - Sever side : 이미지와, 해당 이미지의 부여된 스타일 코드, 사용자의 로그인 정보, 사용자의 FTTI를 저장하는 데이터 베이스 서버
 - App side : 사용자가 자신의 FTTI에 맞는 옷을 추천 받을 수 있는 앱 인터페이스 개발
-
 - Data Flow
 
 ![Untitled](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/assets/144207567/ebff7c2b-216e-4562-9722-bf577020521a)
@@ -73,17 +72,14 @@
 - 구현 계획
 
   1. Java Script를 통해 PC Side 개발하고 등록자 편의성을 위해 웹 배포
-
   2. Google Cloud 제품에서 머신 러닝 라벨링 API를 채택하고, 스타일 별로 이미지 데이터 학습
-
   3. firebase를 통해서 서버 구축, 이미지 데이터를 저장할 수 있는 firebase storage, 실시간 데이터베이스를 사용할 수 있는 firestore를 이용해 백서버를 구축한다.
-     4)flutter 프레임 워크를 통해 App side개발, 안드로이드 기반으로 개발하며 로그인 기능을 소셜 구글 로그인 기능으로 구현한다.
-     | SIDE | language and framework | FEATURES |
+     4)flutter 프레임 워크를 통해 App side개발, 안드로이드 기반으로 개발하며 로그인 기능을 소셜 구글 로그인 기능으로 구현한다.| SIDE          | language and framework | FEATURES                                                                                               |
      | ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------ |
-     | PC(WEB) | JAVA SCRIPT, Html | 서버 클라이언트 호출, 수집 이미지 데이터 호출 |
-     | 머신 러닝 API | Google Cloud | 스타일별 이미지 데이터 학습을 통해 라벨링 값 호출 |
-     | Data base | fireStore, fireStorage | 데이터를 호출, 저장할 수 있는 백서버 구축 |
-     | APP | dart, flutter | 안드로이드 기반의 앱 인터페이스를 개발, 소셜 구글 로그인기능, FTTI 에 따른 스타일을 추천하는 기능 구현 |
+     | PC(WEB)       | JAVA SCRIPT, Html      | 서버 클라이언트 호출, 수집 이미지 데이터 호출                                                          |
+     | 머신 러닝 API | Google Cloud           | 스타일별 이미지 데이터 학습을 통해 라벨링 값 호출                                                      |
+     | Data base     | fireStore, fireStorage | 데이터를 호출, 저장할 수 있는 백서버 구축                                                              |
+     | APP           | dart, flutter          | 안드로이드 기반의 앱 인터페이스를 개발, 소셜 구글 로그인기능, FTTI 에 따른 스타일을 추천하는 기능 구현 |
 
 **(4) 설계의 현실적 제한 요소**
 
@@ -115,4 +111,4 @@
 | Github 등록 | 동국대 CSID에 업로드 예정                  | 24년 5월 29일  |
 | SW등록      | 개발이 완료되면 플레이스토어에 앱등록 예정 | 24년 5월 29일  |
 
-[:point_right:__*README로 돌아가기*__](../README.md)
+[👉***README로 돌아가기***](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01)

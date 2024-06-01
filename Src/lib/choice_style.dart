@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -5,7 +7,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:ossproj_comfyride/explain_FTTI.dart';
-import 'package:ossproj_comfyride/Login_Screen.dart';
 import 'package:ossproj_comfyride/ftti.dart';
 
 class Choice_Style extends StatefulWidget {
@@ -21,29 +22,36 @@ class _Choice_Style extends State<Choice_Style> {
   List<Map<String, dynamic>> _imageList = <Map<String, dynamic>>[];
   List<bool> bool_Grid = [];
   bool isLoading = false; // 로딩 상태 추적
-  bool isDone = false; //스타일 선택 완료 여부
+  bool isDone = false; // 스타일 선택 완료 여부
   var count = 0;
   List<Map<String, dynamic>> _userSelectCode = <Map<String, dynamic>>[];
 
   @override
   void initState() {
+    super.initState();
     _loadData();
     _choiceShoweDialog();
-    super.initState();
   }
 
   Future<void> _loadData() async {
     if (isLoading) return; // 이미 로딩 중이면 중복 실행 방지
     setState(() => isLoading = true);
-    var querySnapshot = await db.collection("data_real").get();
+    var querySnapshot = await db.collection('data_').get();
     List<Map<String, dynamic>> _newList = [];
 
     for (var doc in querySnapshot.docs) {
-      _newList.add({'id': doc.id, 'img': doc['img'], 'code': doc['code']});
-      bool_Grid.add(false);
+      var data = doc.data();
+      if (data.containsKey('img') && data.containsKey('code')) {
+        _newList.add({'id': doc.id, 'img': data['img'], 'code': data['code']});
+        bool_Grid.add(false);
+      } else {
+        // 필요한 필드가 없을 경우 처리
+        print('문서 ${doc.id}에 img 또는 code 필드가 없습니다.');
+      }
     }
     setState(() {
       _imageList = _newList;
+      isLoading = false;
     });
   }
 
@@ -114,7 +122,7 @@ class _Choice_Style extends State<Choice_Style> {
     });
   }
 
-  // @override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -180,20 +188,21 @@ class _Choice_Style extends State<Choice_Style> {
   }
 
   Widget grid_generator() {
-    if (_imageList.isEmpty) {
+    if (_imageList.isEmpty || isLoading) {
       // list_가 비어 있는지 확인
       return Center(child: CircularProgressIndicator()); // 로딩 인디케이터 표시
     }
     return MasonryGridView.builder(
       gridDelegate:
           SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemCount: _imageList.length, // itemCount를 list_의 길이로 설정
+      itemCount: 30,
       mainAxisSpacing: 8,
       crossAxisSpacing: 8,
       itemBuilder: (context, index) {
+        final item = _imageList[index];
+
         return GestureDetector(
             onTap: () {
-              // 탭되었을 때 실행할 코드를 여기에 추가합니다.
               setState(() {
                 if (count < 10) {
                   if (bool_Grid[index] == false) {
@@ -212,19 +221,21 @@ class _Choice_Style extends State<Choice_Style> {
                 }
                 if (count == 10) {
                   setState(() {
-                    _saveUserSelection();
-                    _explainShowDialog();
-                    FTTI(widget.uid);
-
-                    // 비동기 함수 호출을 별도의 함수로 분리
-                    _callFTTI();
+                    isDone = true;
                   });
-
-                  Future.delayed(const Duration(milliseconds: 3500), () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => explain_FTTI()));
+                  _saveUserSelection();
+                  _explainShowDialog();
+                  _callFTTI().then((_) {
+                    setState(() {
+                      isDone = false;
+                    });
+                    Future.delayed(const Duration(milliseconds: 3500), () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  explain_FTTI(uid: widget.uid)));
+                    });
                   });
                 }
               });
@@ -234,20 +245,19 @@ class _Choice_Style extends State<Choice_Style> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    //이미지 선택시 효과
+                    // 이미지 선택시 효과
                     Opacity(
                       opacity: bool_Grid[index] ? 0.3 : 1,
                       child: Image.network(_imageList[index]['img']),
                     ),
-                    bool_Grid[index]
-                        ? Container(
-                            alignment: Alignment.center,
-                            child: const Icon(
-                              Icons.check,
-                              color: Colors.blue,
-                              size: 90,
-                            ))
-                        : Container(),
+                    if (bool_Grid[index])
+                      Container(
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.blue,
+                            size: 90,
+                          )),
                   ],
                 )));
       },
@@ -255,10 +265,10 @@ class _Choice_Style extends State<Choice_Style> {
   }
 
   Future<void> _callFTTI() async {
-    await FTTI(widget.uid).findAndPrintBestCode();
+    await FTTI(uid: widget.uid).findAndGetBestCode();
   }
 
-  //firestore에 user별 선택한 스타일 추가
+  // Firestore에 user별 선택한 스타일 추가
   Future<void> _saveUserSelection() async {
     List<String> selectedCodes =
         _userSelectCode.map((item) => item['code'] as String).toList();
@@ -279,7 +289,7 @@ class _Choice_Style extends State<Choice_Style> {
       'o': codeCountMap['o']!,
       'c': codeCountMap['c']!
     };
-    //DB에 내용 반영
+    // DB에 내용 반영
     await db.collection('users').doc(widget.uid).update({
       'selected_codes': selectedCodes,
       'code_count': result,

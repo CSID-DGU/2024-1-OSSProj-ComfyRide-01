@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ossproj_comfyride/choice_style.dart';
-import 'package:ossproj_comfyride/ftti.dart';
 
 class Login_Screen extends StatefulWidget {
   const Login_Screen({super.key});
@@ -143,11 +142,27 @@ class _Login_ScreenState extends State<Login_Screen> {
       // Get the Firebase UID
       _uid = userCredential.user?.uid ?? "UID not available";
 
-      // UID를 문서 ID로 설정하여 문서 생성
+      // UID를 문서 ID로 설정하여 문서 참조 생성
       final userDocRef =
           FirebaseFirestore.instance.collection('users').doc(_uid);
 
-      // Firestore 문서에 저장할 user Data
+      // Firestore에서 사용자 문서 확인
+      final docSnapshot = await userDocRef.get();
+
+      // 'selected_codes'와 'FTTI' 필드가 이미 있는지 확인
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data();
+        if (data != null &&
+            data.containsKey('selected_codes') &&
+            data.containsKey('FTTI') &&
+            data['selected_codes'] != '' &&
+            data['FTTI'] != '') {
+          print('User data already exists and is set properly.');
+          return;
+        }
+      }
+
+      // 기 등록 데이터 없을 경우 Firestore 문서에 user Data 저장
       final userData = {
         'uid': _uid,
         'selected_codes': '',
@@ -157,9 +172,9 @@ class _Login_ScreenState extends State<Login_Screen> {
       // Firestore 문서에 사용자 데이터를 설정
       await userDocRef.set(userData);
 
-      print('sucess add user id!');
+      print('Success add user id!');
     } catch (e) {
-      print('error: $e');
+      print('Error: $e');
     }
   }
 }
