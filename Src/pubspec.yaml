@@ -25,6 +25,10 @@ dependencies:
   url_launcher: ^6.2.6
   giffy_dialog: ^2.1.0
   csv: ^6.0.0
+  cached_network_image: ^3.2.0
+  provider: ^6.0.3
+  flutter_native_splash: ^2.4.0
+  shared_preferences: ^2.0.6
 
 
 dev_dependencies:
@@ -41,6 +45,4 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
-    - assets/ex.jpeg
-    - assets/google.png
-    - assets/ftti.csv
+    - assets/

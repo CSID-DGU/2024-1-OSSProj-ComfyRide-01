@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:ossproj_comfyride/choice_style.dart';
+import 'package:ossproj_comfyride/screen/choice_style.dart';
+import 'package:ossproj_comfyride/screen/main_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login_Screen extends StatefulWidget {
   const Login_Screen({super.key});
@@ -13,29 +15,29 @@ class Login_Screen extends StatefulWidget {
 
 class _Login_ScreenState extends State<Login_Screen> {
   String _uid = "";
+  bool newUser = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(''),
-        backgroundColor: Colors.blue,
+        backgroundColor: Color(0xFF2196F3),
       ),
       body: SafeArea(
         child: Container(
           color: Colors.blue,
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start, // Align children at the start
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 30), // Add padding for spacing
+                  padding: EdgeInsets.only(top: 30),
                   child: Text(
                     'FTTI',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 70,
+                      fontSize: 75,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -44,14 +46,14 @@ class _Login_ScreenState extends State<Login_Screen> {
               Center(
                 child: Text(
                   'Fashion Tendency Types Indicator',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: TextStyle(color: Colors.white, fontSize: 23),
                 ),
               ),
               SizedBox(height: 200),
               Center(
                 child: Text(
                   '알려줘, 나의 패션 코드!',
-                  style: TextStyle(color: Colors.white, fontSize: 25),
+                  style: TextStyle(color: Colors.white, fontSize: 30),
                 ),
               ),
               SizedBox(height: 130),
@@ -61,12 +63,30 @@ class _Login_ScreenState extends State<Login_Screen> {
                     // 구글 로그인 수행
                     final UserCredential? userCredential =
                         await signInWithGoogle();
-                    // Firestore에 사용자 추가
-                    await addUser(userCredential!);
+                    if (userCredential != null) {
+                      // 로그인 상태를 SharedPreferences에 저장
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setBool('isLoggedIn', true);
+                      await prefs.setString('uid', _uid);
 
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => Choice_Style(uid: _uid),
-                    ));
+                      // Firestore에 사용자 추가
+                      await addUser(userCredential);
+
+                      // 신규 유저이면 스타일 선택 페이지로 이동
+                      if (newUser) {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => Choice_Style(uid: _uid),
+                        ));
+                      } else {
+                        // 기존 유저이면 MainScreen의 설명 페이지로 이동
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => MainScreen(
+                              uid: _uid,
+                              initialIndex: 1), // 초기 index를 1로 설정해 설명 페이지로 이동
+                        ));
+                      }
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -99,9 +119,9 @@ class _Login_ScreenState extends State<Login_Screen> {
     );
   }
 
+  // 구글 로그인 함수
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      // Trigger the authentication flow (구글 로그인 요청)
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
@@ -109,27 +129,21 @@ class _Login_ScreenState extends State<Login_Screen> {
         return null;
       }
 
-      // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      // Create a new credential
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // Sign in with Firebase
       final UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
 
-      // Get the Firebase UID
       _uid = userCredential.user?.uid ?? "UID not available";
 
-      // Print the Firebase UID to the console
       print('Firebase UID: $_uid');
 
-      // Return the UserCredential
       return userCredential;
     } catch (e) {
       print('error: $e');
@@ -137,19 +151,16 @@ class _Login_ScreenState extends State<Login_Screen> {
     }
   }
 
+  // Firestore에 사용자 추가 함수
   Future<void> addUser(UserCredential userCredential) async {
     try {
-      // Get the Firebase UID
       _uid = userCredential.user?.uid ?? "UID not available";
 
-      // UID를 문서 ID로 설정하여 문서 참조 생성
       final userDocRef =
           FirebaseFirestore.instance.collection('users').doc(_uid);
 
-      // Firestore에서 사용자 문서 확인
       final docSnapshot = await userDocRef.get();
 
-      // 'selected_codes'와 'FTTI' 필드가 이미 있는지 확인
       if (docSnapshot.exists) {
         final data = docSnapshot.data();
         if (data != null &&
@@ -157,19 +168,18 @@ class _Login_ScreenState extends State<Login_Screen> {
             data.containsKey('FTTI') &&
             data['selected_codes'] != '' &&
             data['FTTI'] != '') {
+          newUser = false;
           print('User data already exists and is set properly.');
           return;
         }
       }
 
-      // 기 등록 데이터 없을 경우 Firestore 문서에 user Data 저장
       final userData = {
         'uid': _uid,
         'selected_codes': '',
         'FTTI': '',
       };
 
-      // Firestore 문서에 사용자 데이터를 설정
       await userDocRef.set(userData);
 
       print('Success add user id!');

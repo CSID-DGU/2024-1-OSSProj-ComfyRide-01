@@ -91,21 +91,48 @@ class FTTI {
   }
 
   // 5. 가장 작은 제곱합을 가지는 행의 코드를 출력
-  Future<Map<String, double>> findAndGetBestCode() async {
+  Future<Map<String, double>> findAndGetBestCode(String uid) async {
+    // 유저의 선택 결과를 가져옴
     Map<String, int> selectedResult = await getUserSelectedResult();
+    // 비율 계산
     Map<String, double> ratios = calculateRatios(selectedResult);
+    // CSV 파일 읽기
     List<List<dynamic>> fields = await readCSV('assets/ftti.csv');
+    // 가장 적합한 코드 찾기
     String bestCode = findBestCode(fields, ratios);
 
-    // 유저별 FTTI DB에 추가
-    await db.collection('users').doc(uid).update({
-      'FTTI': bestCode,
-    });
+    // explain_FTTI 컬렉션에서 bestCode에 해당하는 full_eng 값을 찾음
+    try {
+      QuerySnapshot explainFTTISnapshot = await FirebaseFirestore.instance
+          .collection('explain_FTTI')
+          .where('name_eng', isEqualTo: bestCode)
+          .get();
+
+      if (explainFTTISnapshot.docs.isNotEmpty) {
+        String fullEng = explainFTTISnapshot.docs.first.get('full_eng');
+
+        // 유저별 FTTI DB에 full_eng, name_eng, bestF, bestO, bestC 추가
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'FTTI': fullEng,
+          'name_eng': bestCode,
+          'bestF': ratios['f'],
+          'bestO': ratios['o'],
+          'bestC': ratios['c'],
+        });
+
+        print(
+            'User FTTI updated successfully with full_eng: $fullEng, name_eng: $bestCode, bestF: ${ratios['f']}, bestO: ${ratios['o']}, bestC: ${ratios['c']}.');
+      } else {
+        print('No matching document found in explain_FTTI.');
+      }
+    } catch (e) {
+      print('Failed to update user FTTI: $e');
+    }
 
     return {
-      'bestF': bestF,
-      'bestO': bestO,
-      'bestC': bestC,
+      'bestF': ratios['f']!,
+      'bestO': ratios['o']!,
+      'bestC': ratios['c']!,
     };
   }
 }

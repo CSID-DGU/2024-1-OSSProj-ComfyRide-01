@@ -1,0 +1,7 @@
+flutter_native_splash:
+  color: "#2196F3"
+  image: assets/loading_image.png
+  android: true
+  ios: true
+  web: true
+  ios_content_mode: scaleAspectFill
