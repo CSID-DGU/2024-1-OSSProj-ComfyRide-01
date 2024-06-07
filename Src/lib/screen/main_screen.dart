@@ -38,6 +38,7 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _selectedIndex = widget.initialIndex;
     _userDataFuture = _fetchUserData(widget.uid); // 사용자 데이터 fetch를 Future로 처리
+    print('uid : ${widget.uid}}');
   }
 
   Future<Map<String, dynamic>> _fetchUserData(String uid) async {

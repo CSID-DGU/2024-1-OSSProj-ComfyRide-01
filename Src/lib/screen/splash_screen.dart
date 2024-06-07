@@ -21,7 +21,8 @@ class _SplashScreenState extends State<SplashScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     if (isLoggedIn) {
-      String uid = prefs.getString('uid') ?? '';
+      String uid = prefs.getString('uid') ?? 'no id';
+      print(uid);
       // 로그인 상태라면 설명 페이지로 이동
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
