@@ -56,6 +56,17 @@ FTTI에 맞는 스타일 추천 화면
 - 해당항목은 추후 디렉토리 및 보도자료로 활용 예정이오니 상세하고 쉽게 작성한다.
 - 규격 및 중량 표기 (출품작 사진有 첨부)  
 
+##### 프로젝트의 추진 내용은 ABET(Accreditation Board for Engineering and Technology)의 Engineering Design Steps를 따른다
+
+1. Identifying a need(요구사항 분석)  
+2. Defining the problem(문제 정의)  
+3. Conducting research(연구 설계)  
+4. Narrowing the research(연구 상세 설계)  
+5. Analyzing set criteria()  
+6. Finding alternative solutions  
+7. Analyzing possible solutions  
+8. Making a decision  
+
 #### 3.2 프로젝트 구현과정
 
 - 개념설계 / 상세설계 / 구현 이론 등 문제 해결 방안 및 과정 설명  
@@ -63,13 +74,17 @@ FTTI에 맞는 스타일 추천 화면
 - 기존 작품을 Upgrade한 경우, 기존 작품과의 차이점 기술 요망
 - 수행계획, 중간발표 내용 중 최종적으로 적용된 내용을 포함하여 작성
 
-##### 요구사항 명세서
+##### 요구사항 명세서 - 변경사항 쓰기
 
-##### 유스케이스 다이어그램
+##### 유스케이스 다이어그램 - 변경사항 쓰기
 
-##### 시스템 구성도
+##### 시스템 구성도 - 변화된 것 쓰기
 
 ##### 시퀀스 다이어그램
+
+1. 비회원이 FTTI검사받고 큐레이션 보고 추천 스타일 조회 후 쇼핑몰로 이동
+2. 회원이 찜을 누르고 찜목록에서 스타일 선택 후 쇼핑몰로 이동
+3. 회원이 오늘은 뭐입지에서 선택 후 쇼핑몰 링크로 이동
 
 ### 4. 기대효과  
 
@@ -91,10 +106,9 @@ FTTI에 맞는 스타일 추천 화면
 
 1. 저자, 제목, 교과목, ㅇㅇ대학, 연월.  
 2. 저자, 제목, 출판사, 연월.
-2. 저자, 제목, 저널명, 권, 호, 연월, 페이지.
-3. 저자, 제목, 사이트/블로그명, 링크, 연월.  
+3. 저자, 제목, 저널명, 권, 호, 연월, 페이지.
+4. 저자, 제목, 사이트/블로그명, 링크, 연월.  
 
-- stackoverflow Q&A 다수
 - Velog
   - [다이어그램 참고](https://velog.io/@wansook0316/Sequence-Diagram)
   - [OpenCV 활용 사례](https://velog.io/@jaehyeong/OpenCV%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EA%B8%B0%EC%B4%88-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%B2%98%EB%A6%AC-with-Python)
@@ -105,7 +119,7 @@ FTTI에 맞는 스타일 추천 화면
 
 ### 7. 프로젝트 성과
 
-* Guthub 등록 / SW 등록 / 논문 / 특허 등 성과를 구체적으로 기재  
+* Github 등록 / SW 등록 / 논문 / 특허 등 성과를 구체적으로 기재  
 
 | 항목        | 세부내용                  | 달성시기 |
 | ----------- | ------------------------- | -------------- |
@@ -120,5 +134,4 @@ FTTI에 맞는 스타일 추천 화면
 3. 팀구성원이 함께 찍은 사진 1장  
     * jpg파일 별도제출(파일명: eg. Tnn_팀명_팀사진.jpg)  
 4. 작품설명용 사진 1~2장  
-    * jpg파일 별도 제출(파일명: eg. Tnn_팀명_4_개념설계.jpg)  
-
+    * jpg파일 별도 제출(파일명: eg. Tnn_팀명_4_개념설계.jpg)
