@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:ossproj_comfyride/ftti.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ossproj_comfyride/screen/Login_Screen.dart';
 import 'package:ossproj_comfyride/screen/main_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Choice_Style extends StatefulWidget {
   final String uid;
@@ -27,6 +30,7 @@ class _Choice_Style extends State<Choice_Style> {
   List<Map<String, dynamic>> _userSelectCode = <Map<String, dynamic>>[];
   DocumentSnapshot? _lastDocument; // 마지막으로 로드된 문서
   final ScrollController _scrollController = ScrollController();
+  final Random _random = Random(); // 랜덤 인스턴스 생성
 
   @override
   void initState() {
@@ -69,6 +73,9 @@ class _Choice_Style extends State<Choice_Style> {
         print('문서 ${doc.id}에 img 또는 code 필드가 없습니다.');
       }
     }
+
+    // 새로 추가된 데이터를 랜덤으로 섞음
+    _newList.shuffle(_random);
 
     setState(() {
       _imageList.addAll(_newList);
@@ -129,6 +136,40 @@ class _Choice_Style extends State<Choice_Style> {
           ),
         ),
         backgroundColor: Colors.blue,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            color: Colors.white,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("로그아웃"),
+                    content: Text("로그아웃 됐습니다."),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text("확인"),
+                        onPressed: () async {
+                          Navigator.of(context).pop(); // 안내창 닫기
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          await prefs.remove('isLoggedIn');
+                          await prefs.remove('uid');
+                          print('로그아웃 완료');
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) => Login_Screen(),
+                          )); // 로그인 페이지로 이동
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: [

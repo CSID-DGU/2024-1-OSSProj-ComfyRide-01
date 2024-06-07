@@ -3,9 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:ossproj_comfyride/provider/ImageProviderNotifier.dart';
+import 'package:ossproj_comfyride/screen/Login_Screen.dart';
 import 'package:ossproj_comfyride/screen/main_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:ossproj_comfyride/ftti.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class explain_FTTI extends StatefulWidget {
   final String uid;
@@ -163,44 +165,6 @@ class _explain_FTTIState extends State<explain_FTTI> {
     });
   }
 
-  void _explainShowDialog() {
-    Future.delayed(const Duration(milliseconds: 3000), () {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return GiffyDialog.image(
-            Image.network(
-              "https://raw.githubusercontent.com/Shashank02051997/FancyGifDialog-Android/master/GIF's/gif16.gif",
-              height: 300,
-              fit: BoxFit.cover,
-            ),
-            title: Text(
-              '나만의 FTTI 생성이\n완료 됐습니다.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => MainScreen(uid: widget.uid),
-                    ),
-                  );
-                },
-                child: const Text(
-                  '보러가기',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          );
-        },
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -214,6 +178,40 @@ class _explain_FTTIState extends State<explain_FTTI> {
           ),
         ),
         backgroundColor: Colors.blue,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            color: Colors.white,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("로그아웃"),
+                    content: Text("로그아웃 됐습니다."),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text("확인"),
+                        onPressed: () async {
+                          Navigator.of(context).pop(); // 안내창 닫기
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          await prefs.remove('isLoggedIn');
+                          await prefs.remove('uid');
+                          print('로그아웃 완료');
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) => Login_Screen(),
+                          )); // 로그인 페이지로 이동
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -230,58 +228,61 @@ class _explain_FTTIState extends State<explain_FTTI> {
             ),
           ),
           SizedBox(height: 5),
-          Column(
-            children: [
-              Padding(padding: EdgeInsets.only(top: 10)),
-              Text(
-                '당신의 FTTI는? ',
-                style: TextStyle(fontSize: 20),
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                FTTI_full_eng,
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 15),
-              Container(
-                height: 300,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: isLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : CachedNetworkImage(
-                          imageUrl: img,
-                          placeholder: (context, url) => Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
-                          // 이미지가 로드되는 동안 로딩 인디케이터를 표시
-                        ),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(padding: EdgeInsets.only(top: 10)),
+                Text(
+                  '당신의 FTTI는? ',
+                  style: TextStyle(fontSize: 20),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 0),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.85,
-                          child: Text(
-                            " " + exp + "\n\n" + tip,
-                            style: TextStyle(fontSize: 16),
+                Text(
+                  FTTI_full_eng,
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 15),
+                Container(
+                  height: 300,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: isLoading
+                        ? Center(child: CircularProgressIndicator())
+                        : CachedNetworkImage(
+                            imageUrl: img,
+                            placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) {
+                              print('Error loading image: $error');
+                              return Icon(Icons.error);
+                            },
                           ),
-                        )
-                      ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 0),
+                      child: Column(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.85,
+                            child: Text(
+                              " " + exp + "\n\n" + tip,
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

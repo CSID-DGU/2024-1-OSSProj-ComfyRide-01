@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ossproj_comfyride/screen/choice_style.dart';
 import 'package:ossproj_comfyride/screen/main_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login_Screen extends StatefulWidget {
   const Login_Screen({super.key});
@@ -62,22 +63,29 @@ class _Login_ScreenState extends State<Login_Screen> {
                     // 구글 로그인 수행
                     final UserCredential? userCredential =
                         await signInWithGoogle();
-                    // Firestore에 사용자 추가
-                    await addUser(userCredential!);
+                    if (userCredential != null) {
+                      // 로그인 상태를 SharedPreferences에 저장
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setBool('isLoggedIn', true);
+                      await prefs.setString('uid', _uid);
 
-                    //신규 유저이면 스타일 선택페이지로 이동
-                    if (newUser) {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => Choice_Style(uid: _uid),
-                      ));
-                    }
-                    //신규 유저 아니면 스타일 설명 페이지로 이동
-                    else {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => MainScreen(
-                            uid: _uid,
-                            initialIndex: 1), // 초기 index를 1로 설정해 설명 페이지로 이동
-                      ));
+                      // Firestore에 사용자 추가
+                      await addUser(userCredential);
+
+                      // 신규 유저이면 스타일 선택 페이지로 이동
+                      if (newUser) {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => Choice_Style(uid: _uid),
+                        ));
+                      } else {
+                        // 기존 유저이면 MainScreen의 설명 페이지로 이동
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => MainScreen(
+                              uid: _uid,
+                              initialIndex: 1), // 초기 index를 1로 설정해 설명 페이지로 이동
+                        ));
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -111,6 +119,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     );
   }
 
+  // 구글 로그인 함수
   Future<UserCredential?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -142,6 +151,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     }
   }
 
+  // Firestore에 사용자 추가 함수
   Future<void> addUser(UserCredential userCredential) async {
     try {
       _uid = userCredential.user?.uid ?? "UID not available";
