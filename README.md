@@ -10,7 +10,7 @@
   | <span style="color:blue">BE</span> | **장주리** |
   | <span style="color:green">ML&PM</span> | **김민재** |
 
-## 앱 실행 화면
+## 앱 실행 화면 (민재)
 
 (앱 실행화면 사진 넣기)
 
@@ -38,7 +38,7 @@
 ## 시스템 구성도
 
 - 시스템 구성도에 대한 설명
-  ![SystemDiagram](./Doc/Diagrams/시스템구성도.drawio.png)
+  ![SystemDiagram](./Doc/Diagrams/시스템구성도_20240607수정.png)
 
 ## 기대효과
 
@@ -51,8 +51,11 @@
 [👉수행계획 발표자료](Doc/1_2_OSSProj_01_버스태워조_수행계획발표자료%20.pdf)
 [👉중간보고서](Doc/2_1_OSSProj_01_버스태워조_중간보고서.md)
 [👉중간발표자료](Doc/2_2_OSSProj_01_버스태워조_중간발표자료.pdf)
-[👉최종보고서](Doc/3_1_OSSProj_Tn_Tname_최종보고서.md)
+[👉최종보고서](Doc/3_1_OSSProj_01_버스태워조_최종보고서.md)
 [👉최종발표자료](Doc/)
+[제품구성배포운영자료](Doc/3_1_OSSProj_01_버스태워조_최종보고서.md)
+[Overview](Doc/3_1_OSSProj_01_버스태워조_최종보고서.md)
+[범위_일정_이슈관리](Doc/3_1_OSSProj_01_버스태워조_최종보고서.md)
 [👉회의록](Doc/4_2_OSSProj_1_버스태워조_회의록.md)
 
 ## 라이선스
