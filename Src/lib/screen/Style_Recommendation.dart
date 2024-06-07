@@ -32,6 +32,7 @@ class StyleRecommendation extends StatefulWidget {
 class _StyleRecommendationState extends State<StyleRecommendation> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<Map<String, dynamic>> list_ = [];
+  var list_cart = [];
   bool isLoading = false; // 로딩 상태 추적
   bool initialLoading = true; // 첫 로딩 상태 추적
   bool _isLoadingMore = false; // 추가 데이터 로딩 상태 추적
@@ -127,6 +128,10 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
         initialLoading = false;
         _isLoadingMore = false;
         print('현재 list_ 총 개수 : ${list_.length}');
+
+        for(var i=0; i< list_.length; i++){
+          list_cart.add(false);
+        }
       });
 
       // 이미지 URL들을 provider에 추가
@@ -162,13 +167,24 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          // 우측의 액션 버튼들
+          IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart,color: Colors.red,)),
+        ],
+        leading:
+        IconButton(onPressed: () {}, icon: Icon(Icons.menu,color: Colors.transparent,)), // 왼쪽 메뉴버튼
         automaticallyImplyLeading: false, // 뒤로가기 버튼 숨기기
         title: Center(
-          child: Text(
-            'FTTI',
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
-          ),
+          child:
+          Padding(
+            padding: EdgeInsets.only(left: 0),
+            child:   Text(
+              'FTTI',
+              style: TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
+            ),
+          )
+
         ),
         backgroundColor: Colors.blue,
       ),
@@ -228,6 +244,10 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
   }
 
   Widget gridGenerator(BuildContext context) {
+
+
+
+
     return MasonryGridView.builder(
       controller: _scrollController,
       gridDelegate:
@@ -236,23 +256,63 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
       mainAxisSpacing: 5,
       crossAxisSpacing: 5,
       itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () async {
-            String shoppingMallUrl = list_[index]['link'];
-            await launchUrl(Uri.parse(shoppingMallUrl));
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: CachedNetworkImage(
-              imageUrl: list_[index]['img'],
-              placeholder: (context, url) => Container(
-                color: Colors.grey[300],
+
+
+        return
+          Stack(
+            children :[
+              GestureDetector(
+                    onTap: () async {
+                String shoppingMallUrl = list_[index]['link'];
+                await launchUrl(Uri.parse(shoppingMallUrl));
+              },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                      child: CachedNetworkImage(
+                        imageUrl: list_[index]['img'],
+                          placeholder: (context, url) => Container(
+                            color: Colors.grey[300],
+                            ),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                        fit: BoxFit.cover,
+                      ),
+                  ),
               ),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-              fit: BoxFit.cover,
-            ),
-          ),
-        );
+
+
+              GestureDetector(
+                onTap: () async {
+                  setState(() {
+                    list_cart[index] = !list_cart[index];
+                  });
+
+                  final FirebaseFirestore _db = FirebaseFirestore.instance;
+                  _db.collection('cart_data').doc().set({
+                    'uid': widget.uid,
+                    'img': list_[index]['img'],
+                    'link':list_[index]['link']
+                  });
+
+                },
+                child: Container(
+                    color: Colors.transparent,
+                    child: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Icon(
+                        Icons.shopping_cart,
+                        color: list_cart[index]?Colors.red:Colors.transparent,
+                      ),
+                    )
+                ),
+              )
+
+
+
+
+
+            ]
+          );
+
       },
     );
   }
