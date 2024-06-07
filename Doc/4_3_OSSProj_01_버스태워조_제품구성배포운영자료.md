@@ -15,7 +15,7 @@
 4. Release title과 Release 노트를 작성한 후 1.에서 빌드한 apk 파일을 첨부.
 5. **Publish release**클릭.
 
-## 3. 프로젝트 제품 운영 방법
+## 3. 프로젝트 제품 운영 방법 (김민재)
 
 ### PC
 
