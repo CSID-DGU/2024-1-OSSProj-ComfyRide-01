@@ -19,6 +19,11 @@ class _Login_ScreenState extends State<Login_Screen> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screenHeight = mediaQuery.size.height;
+    final screenWidth = mediaQuery.size.width;
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(''),
@@ -32,12 +37,12 @@ class _Login_ScreenState extends State<Login_Screen> {
             children: [
               Center(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 30),
+                  padding: EdgeInsets.only(top: screenHeight * 0.05),
                   child: Text(
                     'FTTI',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 75,
+                      fontSize: screenWidth * 0.2,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -46,17 +51,24 @@ class _Login_ScreenState extends State<Login_Screen> {
               Center(
                 child: Text(
                   'Fashion Tendency Types Indicator',
-                  style: TextStyle(color: Colors.white, fontSize: 23),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: screenWidth * 0.05,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: 200),
+              SizedBox(height: screenHeight * (isLandscape ? 0.1 : 0.25)),
               Center(
                 child: Text(
                   '알려줘, 나의 패션 코드!',
-                  style: TextStyle(color: Colors.white, fontSize: 30),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: screenWidth * 0.065,
+                  ),
                 ),
               ),
-              SizedBox(height: 130),
+              SizedBox(height: screenHeight * (isLandscape ? 0.1 : 0.16)),
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
@@ -76,7 +88,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                       // 신규 유저이면 스타일 선택 페이지로 이동
                       if (newUser) {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => Choice_Style(uid: _uid),
+                          builder: (context) =>
+                              Choice_Style(uid: _uid, isFirstLogin: true),
                         ));
                       } else {
                         // 기존 유저이면 MainScreen의 설명 페이지로 이동
@@ -90,24 +103,27 @@ class _Login_ScreenState extends State<Login_Screen> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
+                    padding:
+                        EdgeInsets.symmetric(vertical: screenHeight * 0.015),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(width: 50),
+                      SizedBox(width: screenWidth * 0.1),
                       SizedBox(
-                        width: 30,
-                        height: 50,
+                        width: screenWidth * 0.08,
+                        height: screenWidth * 0.08,
                         child: Image.asset(
                           'assets/google.png',
                         ),
                       ),
-                      SizedBox(width: 15),
+                      SizedBox(width: screenWidth * 0.04),
                       Text(
                         'Google로 시작하기',
-                        style: TextStyle(color: Colors.black, fontSize: 17),
+                        style: TextStyle(
+                            color: Colors.black, fontSize: screenWidth * 0.05),
                       ),
-                      SizedBox(width: 50),
+                      SizedBox(width: screenWidth * 0.1),
                     ],
                   ),
                 ),

@@ -87,7 +87,7 @@
 
 #### 6. 아이템 구매 화면
 
-<img src="imgs/최종보고서_img/4-1.추천스타일조회.png" alt="스타일추천화면" height=400> <img src="imgs/최종보고서_img/4-3.찜목록.png" alt="찜목록" height=400> <img src="imgs/최종보고서_img/5.랜덤스타일추천.png" alt="랜덤스타일추천" height=400> <img src="imgs/최종보고서_img/4-3.쇼핑몰 이동화면.png" alt="쇼핑몰이동" height=400>
+<img src="imgs/최종보고서_img/4-1.추천스타일조회.png" alt="스타일추천화면" height=400> <img src="imgs/최종보고서_img/4-3.찜목록.png" alt="찜목록" height=400> <img src="imgs/최종보고서_img/5.랜덤스타일추천.png" alt="랜덤스타일추천" height=400> 
 
 - "4. 스타일 추천 화면", "4.1. 찜목록 화면" 에서 스타일 사진을 선택하면 해당 스타일의 쇼핑몰 사이트로 연결된다.
 - "5. 랜덤 스타일 추천 화면" 에서 '스타일 보러 가기' 버튼 선택하면 해당 스타일의 쇼핑몰 사이트로 연결된다.

@@ -1,13 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:ossproj_comfyride/provider/ImageProviderNotifier.dart';
-import 'package:ossproj_comfyride/screen/Cart_Screen.dart';
-import 'package:ossproj_comfyride/screen/Login_Screen.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StyleRecommendation extends StatefulWidget {
@@ -131,7 +128,7 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
       // 이미지 URL들을 provider에 추가
       List<String> urls = list_.map((item) => item['img'] as String).toList();
       Provider.of<ImageProviderNotifier>(context, listen: false)
-          .addUrls(urls, context); // context 전달
+          .addUrls(urls, context);
     }
   }
 
@@ -159,108 +156,47 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          // 우측의 액션 버튼들
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Cart(
-                            uid: widget.uid,
-                            FTTI_eng: widget.FTTI_eng,
-                            FTTI_full_eng: widget.FTTI_full_eng,
-                            bestF: widget.bestF,
-                            bestO: widget.bestO,
-                            bestC: widget.bestC)));
-              },
-              icon: Icon(
-                Icons.favorite,
-                color: Colors.red,
-              )),
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return Stack(
+      children: [
+        Container(
+          color: Colors.blue,
+        ),
+        Container(
+          decoration: BoxDecoration(
             color: Colors.white,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("로그아웃"),
-                    content: Text("로그아웃 됐습니다."),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text("확인"),
-                        onPressed: () async {
-                          Navigator.of(context).pop(); // 안내창 닫기
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          await prefs.remove('isLoggedIn');
-                          await prefs.remove('uid');
-                          print('로그아웃 완료');
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => Login_Screen(),
-                          )); // 로그인 페이지로 이동
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ],
-        title: Center(
-            child: Padding(
-          padding: EdgeInsets.only(left: 90),
-          child: Text(
-            'FTTI',
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
-          ),
-        )),
-        backgroundColor: Colors.blue,
-      ),
-      body: Stack(
-        children: [
-          Container(
-            color: Colors.blue,
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
             ),
           ),
-          Column(
-            children: [
-              SizedBox(height: 10),
-              Text(
-                "'${widget.FTTI_full_eng}(${widget.FTTI_eng})' 맞춤 패션 추천",
-                style: TextStyle(fontSize: 18),
-                textAlign: TextAlign.center,
+        ),
+        Column(
+          children: [
+            SizedBox(height: screenHeight * 0.02),
+            Text(
+              "'${widget.FTTI_full_eng}(${widget.FTTI_eng})' 맞춤 패션 추천",
+              style: TextStyle(
+                fontSize: screenWidth * 0.05,
               ),
-              SizedBox(height: 20),
-              Expanded(
-                child: initialLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : gridGenerator(context),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: screenHeight * 0.03),
+            Expanded(
+              child: initialLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : gridGenerator(context),
+            ),
+            if (_isLoadingMore)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircularProgressIndicator(),
               ),
-              if (_isLoadingMore)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(),
-                ),
-            ],
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -280,6 +216,7 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
   }
 
   Widget gridGenerator(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     var likedUrls = Provider.of<ImageProviderNotifier>(context).likedUrls;
     return MasonryGridView.builder(
       controller: _scrollController,
@@ -310,8 +247,8 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
               ),
             ),
             Positioned(
-              bottom: 10,
-              right: 5,
+              bottom: screenWidth * 0.025,
+              right: screenWidth * 0.012,
               child: IconButton(
                 icon: Icon(
                   isLiked ? Icons.favorite : Icons.favorite_border,

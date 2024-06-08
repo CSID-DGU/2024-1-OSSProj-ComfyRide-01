@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:ossproj_comfyride/screen/Cart_Screen.dart';
+import 'package:ossproj_comfyride/screen/Login_Screen.dart';
 import 'package:ossproj_comfyride/screen/Style_Recommendation.dart';
 import 'package:ossproj_comfyride/screen/choice_style.dart';
 import 'package:ossproj_comfyride/screen/explain_FTTI.dart';
 import 'package:ossproj_comfyride/screen/today_recommendation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainScreen extends StatefulWidget {
   final String uid;
@@ -37,7 +40,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _selectedIndex = widget.initialIndex;
-    _userDataFuture = _fetchUserData(widget.uid); // 사용자 데이터 fetch를 Future로 처리
+    _userDataFuture = _fetchUserData(widget.uid);
     print('uid : ${widget.uid}}');
   }
 
@@ -75,17 +78,17 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   List<Widget> _widgetOptions(Map<String, dynamic> userData) => <Widget>[
-        Choice_Style(uid: widget.uid),
+        Choice_Style(uid: widget.uid, isFirstLogin: false),
         explain_FTTI(uid: widget.uid),
         StyleRecommendation(
           uid: widget.uid,
           FTTI_eng: userData['FTTI_eng'] ?? 'null',
           FTTI_full_eng: userData['FTTI_full_eng'] ?? 'null',
-          bestF: userData['bestF'] ?? 'null',
-          bestO: userData['bestO'] ?? 'null',
-          bestC: userData['bestC'] ?? 'null',
+          bestF: userData['bestF'] ?? 0.4,
+          bestO: userData['bestO'] ?? 0.3,
+          bestC: userData['bestC'] ?? 0.3,
         ),
-        TodayRecommedation()
+        TodayRecommendation()
       ];
 
   void _onItemTapped(int index) {
@@ -96,11 +99,70 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return FutureBuilder<Map<String, dynamic>>(
-      future: _userDataFuture, // FutureBuilder를 사용해 비동기 데이터를 처리
+      future: _userDataFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text(
+                'FTTI',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: screenWidth * 0.08,
+                ),
+              ),
+              backgroundColor: Colors.blue,
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.exit_to_app),
+                  color: Colors.white,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(
+                            "로그아웃",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.06,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          content: Text(
+                            "로그아웃 됐습니다.",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.045,
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text("확인"),
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.remove('isLoggedIn');
+                                await prefs.remove('uid');
+                                print('로그아웃 완료');
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => Login_Screen(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
             body: Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasError) {
@@ -110,6 +172,87 @@ class _MainScreenState extends State<MainScreen> {
         } else {
           final userData = snapshot.data!;
           return Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text(
+                'FTTI',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: screenWidth * 0.08,
+                ),
+              ),
+              backgroundColor: Colors.blue,
+              actions: <Widget>[
+                if (_selectedIndex == 2) ...[
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Cart(
+                            uid: widget.uid,
+                            FTTI_eng: userData['FTTI_eng'] ?? 'null',
+                            FTTI_full_eng: userData['FTTI_full_eng'] ?? 'null',
+                            bestF: userData['bestF'] ?? 0.4,
+                            bestO: userData['bestO'] ?? 0.3,
+                            bestC: userData['bestC'] ?? 0.3,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
+                IconButton(
+                  icon: Icon(Icons.exit_to_app),
+                  color: Colors.white,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(
+                            "로그아웃",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.045,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          content: Text(
+                            "로그아웃 됐습니다.",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.035,
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text("확인"),
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.remove('isLoggedIn');
+                                await prefs.remove('uid');
+                                print('로그아웃 완료');
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => Login_Screen(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
             body: _widgetOptions(userData)[_selectedIndex],
             bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,

@@ -14,7 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Choice_Style extends StatefulWidget {
   final String uid;
-  Choice_Style({required this.uid, super.key});
+  final bool isFirstLogin;
+  Choice_Style({required this.uid, required this.isFirstLogin, super.key});
 
   @override
   State<Choice_Style> createState() => _Choice_Style();
@@ -92,28 +93,39 @@ class _Choice_Style extends State<Choice_Style> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
+          double screenHeight = MediaQuery.of(context).size.height;
+          double screenWidth = MediaQuery.of(context).size.width;
+
           return GiffyDialog.image(
             Image.network(
               "https://raw.githubusercontent.com/Shashank02051997/FancyGifDialog-Android/master/GIF's/gif15.gif",
-              height: 200,
+              height: screenHeight * 0.3,
               fit: BoxFit.cover,
             ),
-            title: const Text(
+            title: Text(
               '나만의 FTTI 찾기',
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: screenWidth * 0.06,
+              ),
             ),
-            content: const Text(
+            content: Text(
               '마음에 드는 옷을 선택하면\n나의 FTTI를 알 수 있습니다!',
-              style: TextStyle(fontSize: 15),
+              style: TextStyle(
+                fontSize: screenWidth * 0.045,
+              ),
               textAlign: TextAlign.center,
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, 'OK'),
-                child: const Text(
+                child: Text(
                   '시작',
                   textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.045,
+                  ),
                 ),
               ),
             ],
@@ -125,102 +137,122 @@ class _Choice_Style extends State<Choice_Style> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false, // 뒤로가기 버튼 숨기기
-        title: Center(
-          child: Text(
-            'FTTI',
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
-          ),
-        ),
-        backgroundColor: Colors.blue,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            color: Colors.white,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("로그아웃"),
-                    content: Text("로그아웃 됐습니다."),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text("확인"),
-                        onPressed: () async {
-                          Navigator.of(context).pop(); // 안내창 닫기
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          await prefs.remove('isLoggedIn');
-                          await prefs.remove('uid');
-                          print('로그아웃 완료');
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => Login_Screen(),
-                          )); // 로그인 페이지로 이동
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Container(
-            color: Colors.blue,
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+      appBar: widget.isFirstLogin
+          ? AppBar(
+              centerTitle: true,
+              title: Text(
+                'FTTI',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: screenWidth * 0.08,
+                ),
               ),
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Column(
+              backgroundColor: Colors.blue,
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.exit_to_app),
+                  color: Colors.white,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(
+                            "로그아웃",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.06,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          content: Text(
+                            "로그아웃 됐습니다.",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.045,
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text("확인"),
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.remove('isLoggedIn');
+                                await prefs.remove('uid');
+                                print('로그아웃 완료');
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => Login_Screen(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            )
+          : null,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double screenHeight = constraints.maxHeight;
+          double screenWidth = constraints.maxWidth;
+
+          return Stack(
             children: [
-              SizedBox(height: 10),
-              Text(
-                '취향에 맞는 옷을 선택해주세요\n ${count.toString()}/10개',
-                style: TextStyle(fontSize: 20),
-                textAlign: TextAlign.center,
+              Container(
+                color: Colors.blue,
               ),
-              SizedBox(height: 20),
-              Expanded(
-                child: isLoading && _imageList.isEmpty
-                    ? Center(child: CircularProgressIndicator())
-                    : grid_generator(),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+              ),
+              Column(
+                children: [
+                  SizedBox(height: screenHeight * 0.02),
+                  Text(
+                    '취향에 맞는 옷을 선택해주세요\n ${count.toString()}/10개',
+                    style: TextStyle(fontSize: screenWidth * 0.053),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: screenHeight * 0.03),
+                  Expanded(
+                    child: isLoading && _imageList.isEmpty
+                        ? Center(child: CircularProgressIndicator())
+                        : grid_generator(screenWidth),
+                  ),
+                ],
+              ),
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: isDone
+                      ? SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: CircularProgressIndicator())
+                      : Container(),
+                ),
               ),
             ],
-          ),
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.center,
-              child: isDone
-                  ? SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: CircularProgressIndicator())
-                  : Container(),
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 
-  Widget grid_generator() {
+  Widget grid_generator(double screenWidth) {
     return MasonryGridView.builder(
       controller: _scrollController,
       gridDelegate:

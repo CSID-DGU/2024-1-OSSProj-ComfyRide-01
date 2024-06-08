@@ -119,6 +119,9 @@ class _CartState extends State<Cart> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -160,13 +163,16 @@ class _CartState extends State<Cart> {
           ),
           Column(
             children: [
-              SizedBox(height: 10),
+              SizedBox(height: screenHeight * 0.01),
               Text(
                 "찜 LIST",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: screenWidth * 0.05,
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: screenHeight * 0.02),
               Expanded(
                 child: initialLoading
                     ? Center(child: CircularProgressIndicator())
@@ -200,11 +206,14 @@ class _CartState extends State<Cart> {
   }
 
   Widget gridGenerator(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     if (list_.isEmpty) {
       return Center(
         child: Text(
           '찜 목록이 없습니다.',
-          style: TextStyle(fontSize: 15),
+          style: TextStyle(fontSize: screenWidth * 0.04),
         ),
       );
     }
@@ -236,16 +245,20 @@ class _CartState extends State<Cart> {
               ),
             ),
             Positioned(
-              top: 10,
-              right: 10,
-              child: IconButton(
-                icon: Icon(
-                  Icons.favorite,
-                  color: Colors.red,
+              top: screenHeight * 0.01,
+              right: screenWidth * 0.02,
+              child: Container(
+                width: screenWidth * 0.1, // 버튼 크기 조정
+                height: screenWidth * 0.1,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                  ),
+                  onPressed: () {
+                    _removeFromCart(index);
+                  },
                 ),
-                onPressed: () {
-                  _removeFromCart(index);
-                },
               ),
             ),
           ],
