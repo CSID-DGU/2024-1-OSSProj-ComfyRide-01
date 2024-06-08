@@ -1,13 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:ossproj_comfyride/provider/ImageProviderNotifier.dart';
-import 'package:ossproj_comfyride/screen/Login_Screen.dart';
 import 'package:ossproj_comfyride/screen/main_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:ossproj_comfyride/ftti.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class explain_FTTI extends StatefulWidget {
   final String uid;
@@ -167,52 +164,10 @@ class _explain_FTTIState extends State<explain_FTTI> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false, // 뒤로가기 버튼 숨기기
-        title: Center(
-          child: Text(
-            'FTTI',
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
-          ),
-        ),
-        backgroundColor: Colors.blue,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            color: Colors.white,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("로그아웃"),
-                    content: Text("로그아웃 됐습니다."),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text("확인"),
-                        onPressed: () async {
-                          Navigator.of(context).pop(); // 안내창 닫기
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          await prefs.remove('isLoggedIn');
-                          await prefs.remove('uid');
-                          print('로그아웃 완료');
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => Login_Screen(),
-                          )); // 로그인 페이지로 이동
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ],
-      ),
       body: Stack(
         children: [
           Container(
@@ -227,24 +182,25 @@ class _explain_FTTIState extends State<explain_FTTI> {
               ),
             ),
           ),
-          SizedBox(height: 5),
           SingleChildScrollView(
             child: Column(
               children: [
-                Padding(padding: EdgeInsets.only(top: 10)),
+                Padding(padding: EdgeInsets.only(top: screenHeight * 0.01)),
                 Text(
                   '당신의 FTTI는? ',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: screenWidth * 0.06),
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   FTTI_full_eng,
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: screenWidth * 0.06,
+                      fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: screenHeight * 0.02),
                 Container(
-                  height: 300,
+                  height: screenHeight * 0.45,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: isLoading
@@ -258,22 +214,23 @@ class _explain_FTTIState extends State<explain_FTTI> {
                               print('Error loading image: $error');
                               return Icon(Icons.error);
                             },
+                            fit: BoxFit.cover,
                           ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(screenWidth * 0.04),
                   child: Align(
                     alignment: Alignment.center,
                     child: Padding(
-                      padding: EdgeInsets.only(top: 0),
+                      padding: EdgeInsets.only(top: screenHeight * 0.01),
                       child: Column(
                         children: [
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.85,
+                            width: screenWidth * 0.8,
                             child: Text(
                               " " + exp + "\n\n" + tip,
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(fontSize: screenWidth * 0.04),
                             ),
                           )
                         ],
