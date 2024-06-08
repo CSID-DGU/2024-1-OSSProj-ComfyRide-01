@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:ossproj_comfyride/provider/ImageProviderNotifier.dart';
 
 class Cart extends StatefulWidget {
   final String uid;
@@ -30,7 +32,6 @@ class Cart extends StatefulWidget {
 class _CartState extends State<Cart> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<Map<String, dynamic>> list_ = [];
-  var list_cart = [];
   bool isLoading = false; // 로딩 상태 추적
   bool initialLoading = true; // 첫 로딩 상태 추적
   bool _isLoadingMore = false; // 추가 데이터 로딩 상태 추적
@@ -97,13 +98,17 @@ class _CartState extends State<Cart> {
     }
   }
 
-  //좋아요 취소 기능
+  // 좋아요 취소 기능
   Future<void> _removeFromCart(int index) async {
     String docId = list_[index]['docId'];
+    String imgUrl = list_[index]['img'];
     await db.collection('cart_data').doc(docId).delete();
     setState(() {
       list_.removeAt(index);
     });
+    // 좋아요 상태 업데이트
+    Provider.of<ImageProviderNotifier>(context, listen: false)
+        .removeUrl(imgUrl);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('찜 목록에서 제거 됐습니다'),
@@ -195,6 +200,14 @@ class _CartState extends State<Cart> {
   }
 
   Widget gridGenerator(BuildContext context) {
+    if (list_.isEmpty) {
+      return Center(
+        child: Text(
+          '찜 목록이 없습니다.',
+          style: TextStyle(fontSize: 15),
+        ),
+      );
+    }
     return MasonryGridView.builder(
       controller: _scrollController,
       gridDelegate:

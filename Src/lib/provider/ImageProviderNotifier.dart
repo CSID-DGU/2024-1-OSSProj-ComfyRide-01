@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class ImageProviderNotifier extends ChangeNotifier {
   final List<String> _urls = [];
   final Map<String, bool> _loadedUrls = {};
+  List<String> _likedUrls = [];
+  List<String> get likedUrls => _likedUrls;
 
   // 현재 로드된 이미지 URL 리스트 반환
   List<String> get urls => _urls;
@@ -30,6 +32,22 @@ class ImageProviderNotifier extends ChangeNotifier {
       notifyListeners(); // 상태 변경 알림
     } catch (e) {
       _loadedUrls[url] = false; // 로드 실패 표시
+    }
+  }
+
+  // 좋아요 URL 추가
+  void addUrl(String url) {
+    if (!_likedUrls.contains(url)) {
+      _likedUrls.add(url);
+      notifyListeners();
+    }
+  }
+
+  // 좋아요 URL 제거
+  void removeUrl(String url) {
+    if (_likedUrls.contains(url)) {
+      _likedUrls.remove(url);
+      notifyListeners();
     }
   }
 }

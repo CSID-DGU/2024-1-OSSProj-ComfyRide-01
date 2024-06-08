@@ -43,7 +43,6 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
   DocumentSnapshot? _lastDocument; // 마지막으로 로드된 문서
   final ScrollController _scrollController = ScrollController();
   final Random _random = Random();
-  List<bool> likedList = [];
 
   @override
   void initState() {
@@ -110,9 +109,6 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
     // 리스트를 섞음
     recommendationList.shuffle(_random);
 
-    likedList =
-        List<bool>.filled(recommendationList.length, false); // 좋아요 상태 초기화
-
     for (int i = 0; i < recommendationList.length; i++) {
       print(recommendationList[i]['code']);
     }
@@ -130,8 +126,6 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
         for (var i = 0; i < list_.length; i++) {
           list_cart.add(false);
         }
-        likedList =
-            List<bool>.filled(recommendationList.length, false); // 좋아요 상태 초기화
       });
 
       // 이미지 URL들을 provider에 추가
@@ -286,6 +280,7 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
   }
 
   Widget gridGenerator(BuildContext context) {
+    var likedUrls = Provider.of<ImageProviderNotifier>(context).likedUrls;
     return MasonryGridView.builder(
       controller: _scrollController,
       gridDelegate:
@@ -294,6 +289,7 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
       mainAxisSpacing: 5,
       crossAxisSpacing: 5,
       itemBuilder: (context, index) {
+        bool isLiked = likedUrls.contains(recommendationList[index]['img']);
         return Stack(
           children: [
             GestureDetector(
@@ -318,34 +314,35 @@ class _StyleRecommendationState extends State<StyleRecommendation> {
               right: 5,
               child: IconButton(
                 icon: Icon(
-                  likedList[index] ? Icons.favorite : Icons.favorite_border,
-                  color: likedList[index] ? Colors.red : Colors.white,
+                  isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: isLiked ? Colors.red : Colors.white,
                 ),
-                color: Colors.red,
                 onPressed: () {
                   setState(() {
-                    likedList[index] = !likedList[index];
+                    if (isLiked) {
+                      likedUrls.remove(recommendationList[index]['img']);
+                      db
+                          .collection('cart_data')
+                          .where('uid', isEqualTo: widget.uid)
+                          .where('img',
+                              isEqualTo: recommendationList[index]['img'])
+                          .get()
+                          .then((querySnapshot) {
+                        for (var doc in querySnapshot.docs) {
+                          db.collection('cart_data').doc(doc.id).delete();
+                        }
+                      });
+                    } else {
+                      likedUrls.add(recommendationList[index]['img']);
+                      db.collection('cart_data').doc().set({
+                        'uid': widget.uid,
+                        'img': recommendationList[index]['img'],
+                        'link': recommendationList[index]['link']
+                      });
+                    }
                   });
-                  if (likedList[index]) {
-                    db.collection('cart_data').doc().set({
-                      'uid': widget.uid,
-                      'img': recommendationList[index]['img'],
-                      'link': recommendationList[index]['link']
-                    });
-                  } else {
-                    // 좋아요 취소 시 해당 데이터 삭제
-                    db
-                        .collection('cart_data')
-                        .where('uid', isEqualTo: widget.uid)
-                        .where('img',
-                            isEqualTo: recommendationList[index]['img'])
-                        .get()
-                        .then((querySnapshot) {
-                      for (var doc in querySnapshot.docs) {
-                        db.collection('cart_data').doc(doc.id).delete();
-                      }
-                    });
-                  }
+                  Provider.of<ImageProviderNotifier>(context, listen: false)
+                      .notifyListeners();
                   print('좋아요 버튼 클릭됨');
                 },
               ),
