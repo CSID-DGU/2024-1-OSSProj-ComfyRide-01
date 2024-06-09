@@ -44,6 +44,10 @@
 ### 6. 아이템 구매 화면
 
 <img src="Doc/imgs/최종보고서_img/4-3.쇼핑몰 이동화면.png" alt="쇼핑몰이동" height=400>
+ 
+### 7. 로그아웃 팝업창
+
+<img src="Doc/imgs/최종보고서_img/6.로그아웃.png" alt="쇼핑몰이동" height=400>  
 
 ## 개발 환경
 

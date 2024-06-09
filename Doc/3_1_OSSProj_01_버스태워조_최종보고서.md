@@ -100,7 +100,14 @@ FTTI(Fashion-Tendency Types Indicator) 프로젝트는 머신러닝을 활용하
 <img src="imgs/최종보고서_img/4-3.쇼핑몰 이동화면.png" alt="쇼핑몰이동" height=400>
 
 - "4. 스타일 추천 화면", "4.1. 찜목록 화면" 에서 스타일 사진을 선택하면 해당 스타일의 쇼핑몰 사이트로 연결된다.
-- "5. 랜덤 스타일 추천 화면" 에서 '스타일 보러 가기' 버튼 선택하면 해당 스타일을 구매할 수 있는 쇼핑몰 사이트로 연결된다.
+- "5. 랜덤 스타일 추천 화면" 에서 '스타일 보러 가기' 버튼 선택하면 해당 스타일을 구매할 수 있는 쇼핑몰 사이트로 연결된다.  
+
+#### 7. 로그아웃 팝업창
+
+<img src="imgs/최종보고서_img/6.로그아웃.png" alt="쇼핑몰이동" height=400>
+
+- "1. 로그인 화면"을 제외한 모든 화면 우측 상단의 아이콘을 선택하면 로그아웃 팝업 창이 뜬다.
+- 확인 버튼을 누르면 로그아웃이 되고, 로그인 페이지로 이동한다. 
   
 ### 3. 프로젝트 추진 내용
 
@@ -131,9 +138,9 @@ FTTI(Fashion-Tendency Types Indicator) 프로젝트는 머신러닝을 활용하
     - 스타일 추천 페이지에서 찜하고 싶은 스타일 선택하여 찜 생성
     - 찜 조회 화면에서 찜 목록 확인 및 삭제 가능
     - 찜한 스타일 선택시 해당 아이템 구매 페이지로 이동 가능
-    - 랜덤 스타일 추천
-      - 사용자 FTTI 맞춤 스타일 추천이 아닌, 랜덤 스타일 추천 기능으로, 해당 페이지 접속시마다 랜덤으로 스타일 추천해주는 페이지
-      - '스타일 보러가기' 버튼 클릭시 해당 아이템 구매 페이지로 이동 가능
+  - 랜덤 스타일 추천
+    - 사용자 FTTI 맞춤 스타일 추천이 아닌, 랜덤 스타일 추천 기능으로, 해당 페이지 접속시마다 랜덤으로 스타일 추천해주는 페이지
+    - '스타일 보러가기' 버튼 클릭시 해당 아이템 구매 페이지로 이동 가능
 - 추후 구현
   - 해당 사항은 추후 기능 서비스 확장 차원에서 구상해놓은 것으로, 금번 프로젝트 종료 이후 구현할 계획임
   - 쇼핑몰과 협업시, 해당 쇼핑몰 관리자가 직접 스타일을 등록, 수정, 관리 기능
@@ -305,8 +312,8 @@ FTTI(Fashion-Tendency Types Indicator) 프로젝트는 머신러닝을 활용하
 
 ### 6. 참고문헌
 
-1. Google, 제휴ID 및 소셜 로그인, Firebase Documentation, [링크](https://firebase.google.com/docs/auth/flutter/federated-auth?hl=ko), 2023년 6월.
-2. Google, Cloud Firestore, Firebase Documentation, [링크](https://firebase.google.com/docs/firestore?hl=ko), 2023년 6월
+1. Google, 제휴ID 및 소셜 로그인, Firebase Documentation, [링크](https://ㅌfirebase.google.com/docs/auth/flutter/federated-auth?hl=ko), 2023년 8월.
+2. Google, Cloud Firestore, Firebase Documentation, [링크](https://firebase.google.com/docs/firestore?hl=ko), 2023년 3월
 3. 최완식, Sequence Diagram, 완숙의 에그머니🥚, [링크](https://velog.io/@wansook0316/Sequence-Diagram), 2023년 5월
 4. 기은P, [UML] 유스케이스 다이어그램(Usecase Diagram), 시간이 멈추는 장소, [링크](https://narup.tistory.com/70), 2023년 5월
 5. ChatGPT
