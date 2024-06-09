@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +5,16 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ossproj_comfyride/provider/ImageProviderNotifier.dart';
+
+/*
+ File Name: Cart_Screen.dart
+ Description: 찜 목록 화면입니다.
+ Author: 이보성
+ Date Created: 2024-06-07
+ Last Modified by: 장주리
+ Last Modified on: 2024-06-09
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
 
 class Cart extends StatefulWidget {
   final String uid;
@@ -37,7 +46,6 @@ class _CartState extends State<Cart> {
   bool _isLoadingMore = false; // 추가 데이터 로딩 상태 추적
   DocumentSnapshot? _lastDocument; // 마지막으로 로드된 문서
   final ScrollController _scrollController = ScrollController();
-  final Random _random = Random();
 
   @override
   void initState() {

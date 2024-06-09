@@ -8,6 +8,16 @@ import 'package:ossproj_comfyride/screen/explain_FTTI.dart';
 import 'package:ossproj_comfyride/screen/today_recommendation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/*
+ File Name: main_screen.dart
+ Description: 기본적인 앱바와 버텀 메뉴바 설정 해놓은 코드입니다.
+ Author: 장주리
+ Date Created: 2024-06-03
+ Last Modified by: 장주리
+ Last Modified on: 2024-06-09
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
+
 class MainScreen extends StatefulWidget {
   final String uid;
   final String? FTTI_full_eng;

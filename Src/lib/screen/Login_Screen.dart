@@ -6,6 +6,16 @@ import 'package:ossproj_comfyride/screen/choice_style.dart';
 import 'package:ossproj_comfyride/screen/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/*
+ File Name: Login_Screen.dart
+ Description: 로그인 화면입니다.
+ Author: 장주리
+ Date Created: 2024-04-17
+ Last Modified by: 장주리
+ Last Modified on: 2024-06-09
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
+
 class Login_Screen extends StatefulWidget {
   const Login_Screen({super.key});
 

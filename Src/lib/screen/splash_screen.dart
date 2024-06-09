@@ -1,11 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ossproj_comfyride/screen/Login_Screen.dart';
-import 'package:ossproj_comfyride/screen/explain_FTTI.dart';
 import 'package:ossproj_comfyride/screen/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// UI 없이 앱 로딩 시 로그인 여부 검사하는 클래스임
+/*
+ File Name: splash_screen.dart
+ Description: 로그인 여부 확인을 위한 스플래쉬 코드입니다.(화면x)
+ Author: 장주리
+ Date Created: 2024-06-05
+ Last Modified by: 장주리
+ Last Modified on: 2024-06-09
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
+
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();

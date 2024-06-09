@@ -6,6 +6,16 @@ import 'package:ossproj_comfyride/screen/main_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:ossproj_comfyride/ftti.dart';
 
+/*
+ File Name: explain_FTTI.dart
+ Description: FTTI 조회 화면입니다.
+ Author: 이보성
+ Date Created: 2024-05-01
+ Last Modified by: 장주리
+ Last Modified on: 2024-06-09
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
+
 class explain_FTTI extends StatefulWidget {
   final String uid;
   const explain_FTTI({required this.uid, super.key});

@@ -4,6 +4,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/*
+ File Name: today_recommendation.dart
+ Description: 랜덤 스타일 추천 화면입니다.
+ Author: 장주리
+ Date Created: 2024-06-01
+ Last Modified by: 장주리
+ Last Modified on: 2024-06-09
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
+
 class TodayRecommendation extends StatefulWidget {
   const TodayRecommendation({super.key});
 

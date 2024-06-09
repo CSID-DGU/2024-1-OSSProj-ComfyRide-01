@@ -4,6 +4,16 @@ import 'package:ossproj_comfyride/provider/ImageProviderNotifier.dart';
 import 'package:ossproj_comfyride/screen/splash_screen.dart';
 import 'package:provider/provider.dart';
 
+/*
+ File Name: main.dart
+ Description: FTTI의 main 코드입니다.
+ Author: 이보성
+ Date Created: 2024-04-01
+ Last Modified by: 장주리
+ Last Modified on: 2024-06-09
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

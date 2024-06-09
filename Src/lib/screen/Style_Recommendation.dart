@@ -7,6 +7,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/*
+ File Name: Style_Recommendation.dart
+ Description: FTTI별 스타일 추천 화면입니다.
+ Author: 장주리
+ Date Created: 2024-04-27
+ Last Modified by: 장주리
+ Last Modified on: 2024-06-09
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
 class StyleRecommendation extends StatefulWidget {
   final String uid;
   final String FTTI_eng;

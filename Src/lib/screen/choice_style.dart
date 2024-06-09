@@ -12,6 +12,16 @@ import 'package:ossproj_comfyride/screen/Login_Screen.dart';
 import 'package:ossproj_comfyride/screen/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/*
+ File Name: choice_style.dart
+ Description: 스타일 선택(=FTTI검사)화면입니다.
+ Author: 이보성
+ Date Created: 2024-05-01
+ Last Modified by: 장주리
+ Last Modified on: 2024-06-09
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
+
 class Choice_Style extends StatefulWidget {
   final String uid;
   final bool isFirstLogin;

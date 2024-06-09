@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
 
+/*
+ File Name: ImageProviderNotifier.dart
+ Description: 해당 프로젝트의 상태관리를 위한 파일입니다.
+ Author: 장주리
+ Date Created: 2024-06-03
+ Last Modified by: 장주리
+ Last Modified on: 2024-06-09
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
+
 class ImageProviderNotifier extends ChangeNotifier {
   final List<String> _urls = [];
   final Map<String, bool> _loadedUrls = {};

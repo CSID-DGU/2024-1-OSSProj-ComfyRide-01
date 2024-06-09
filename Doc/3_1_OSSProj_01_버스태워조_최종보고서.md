@@ -198,8 +198,9 @@ FTTI(Fashion-Tendency Types Indicator) 프로젝트는 머신러닝을 활용하
 
 ##### 시퀀스 다이어그램
 
-**1. FTTI 검사, 조회, 추천 스타일 조회**
-![시퀀스1](/Doc/Diagrams/Sequence/FTTI검사_조회_추천스타일조회.png){: width="70%" height="70%"}
+###### 1. FTTI 검사, 조회, 추천 스타일 조회
+
+![시퀀스1](/Doc/Diagrams/Sequence/FTTI검사_조회_추천스타일조회.png)
 
 **다이어그램 설명:**
 이 시퀀스 다이어그램은 FTTI 검사, FTTI 조회, 추천 스타일 조회에 대한 프로세스 흐름을 보여준다. 주요 구성 요소로는 서비스 사용자, FTTI 앱, Firebase, 그리고 다양한 데이터베이스(사용자 DB, 스타일 DB, FTTI DB)가 포함된다.
@@ -220,8 +221,9 @@ FTTI(Fashion-Tendency Types Indicator) 프로젝트는 머신러닝을 활용하
   - FTTI 정보를 기반으로 추천 스타일 ID를 데이터베이스에서 가져온다.
   - 추천 스타일 ID를 사용하여 추천 스타일을 사용자에게 표시한다.
 
-**2. 스타일 찜, 찜목록 조회, 랜덤 스타일 조회**
-![시퀀스1](/Doc/Diagrams/Sequence/스타일찜_찜목록조회_randomstyle조회.png){: width="70%" height="70%"}
+###### 2. 스타일 찜, 찜목록 조회, 랜덤 스타일 조회
+
+![시퀀스2](/Doc/Diagrams/Sequence/스타일찜_찜목록조회_randomstyle조회.png)
 
 **다이어그램 설명:**
 이 시퀀스 다이어그램은 스타일 찜, 찜목록 조회, 랜덤 스타일 조회에 대한 워크플로우를 보여준다. 주요 구성 요소로는 서비스 사용자, FTTI 앱, Firebase, 그리고 데이터베이스(사용자 DB, 스타일 DB)가 포함된다.
@@ -241,8 +243,9 @@ FTTI(Fashion-Tendency Types Indicator) 프로젝트는 머신러닝을 활용하
   - FTTI 서비스는 데이터베이스에서 랜덤 스타일 ID를 가져온다.
   - 스타일 ID를 사용하여 해당 스타일 사진을 조회하고 사용자에게 표시한다.
 
-**3. 아이템 구매**
-![시퀀스1](/Doc/Diagrams/Sequence/아이템구매.png){: width="70%" height="70%"}
+###### 3. 아이템 구매
+
+![시퀀스3](/Doc/Diagrams/Sequence/아이템구매.png)
 
 **다이어그램 설명:**
 이 시퀀스 다이어그램은 아이템 구매 프로세스를 보여준다. 주요 구성 요소로는 서비스 사용자, FTTI 앱, Firebase, 그리고 데이터베이스(사용자 DB, 스타일 DB)가 포함된다.
@@ -255,17 +258,17 @@ FTTI(Fashion-Tendency Types Indicator) 프로젝트는 머신러닝을 활용하
 
 #### 3.2 프로젝트 구현과정
 
-##### 1. [무한로딩 현상](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/issues/38)
+##### 1. [이미지 끊김 현상](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/issues/38)
 
-- **문제:** 앱에서 특정 페이지로 이동 시 무한 로딩이 발생함.
-- **원인:** 네트워크 지연 혹은 서버 응답 없음.
-- **해결 방안:** 타임아웃 설정을 추가하고, 로딩 실패 시 재시도 기능을 구현함. 네트워크 상태 확인 로직을 추가하여 연결이 끊긴 경우 사용자에게 알림을 제공함.
+- **문제:** 스타일 선택, 추천 페이지에서 이미지 로딩 속도가 느려 이미지가 끊기고, 버벅거리는 현상 발생
+- **원인:** 다량의 이미지를 한번에 로딩하려는 로직의 문제
+- **해결 방안:** 커서 기반 페이지 네이션을 구현하여, 최초 로딩시 전체 이미지 중 30개만 로딩하고 커서가 30번째 이미지에 도달하면 추가적으로 20개씩 로딩되도록 하여 속도를 개선함
 
 <p align="center" style="color:gray">
-  <img src="/Doc/imgs/최종보고서_img/이슈_무한로딩.png" style="padding: 0;margin:0;" width=900>
+  <img src="/Doc/imgs/최종보고서_img/이슈_이미지끊김.png" style="padding: 0;margin:0;" width=900>
 </p>
 <p align="center">
-  주요 이슈 - 이미지 무한로딩 현상
+  주요 이슈 - 이미지 끊김 현상
 </p>
 
 ##### 2. [신규 유저 페이지 불러오기 오류](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/issues/69)

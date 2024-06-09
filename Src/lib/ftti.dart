@@ -2,6 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:csv/csv.dart';
 
+/*
+ File Name: FTTI.dart
+ Description: 사용자 FTTI 분석 로직이 구현된 파일입니다.
+ Author: 장주리
+ Date Created: 2024-05-24
+ Last Modified by: 장주리
+ Last Modified on: 2024-06-09
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
+
 class FTTI {
   final String? uid;
   double bestF = 0;

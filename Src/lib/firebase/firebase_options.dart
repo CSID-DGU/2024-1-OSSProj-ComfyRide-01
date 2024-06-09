@@ -1,7 +1,13 @@
-
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+/*
+ File Name: firebase_options.dart
+ Description: firebase 연동시 자동으로 생성되는 파일입니다.
+ Author: 장주리
+ Date Created: 2024-04-06
+ Copyright (c) 2024, ComfyRide. All rights reserved.
+*/
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
