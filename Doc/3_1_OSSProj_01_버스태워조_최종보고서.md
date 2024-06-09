@@ -258,7 +258,9 @@ FTTI(Fashion-Tendency Types Indicator) 프로젝트는 머신러닝을 활용하
 
 #### 3.2 프로젝트 구현과정
 
-##### 1. [이미지 끊김 현상](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/issues/38)
+##### 주요 문제점(이슈) 및 해결 사항
+
+###### 1. [이미지 끊김 현상](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/issues/38)
 
 - **문제:** 스타일 선택, 추천 페이지에서 이미지 로딩 속도가 느려 이미지가 끊기고, 버벅거리는 현상 발생
 - **원인:** 다량의 이미지를 한번에 로딩하려는 로직의 문제
@@ -271,7 +273,7 @@ FTTI(Fashion-Tendency Types Indicator) 프로젝트는 머신러닝을 활용하
   주요 이슈 - 이미지 끊김 현상
 </p>
 
-##### 2. [신규 유저 페이지 불러오기 오류](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/issues/69)
+###### 2. [신규 유저 페이지 불러오기 오류](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/issues/69)
 
 - **문제:** 신규 유저 로그인 시 선택 화면으로 이동하지 않고 잘못된 페이지로 이동하는 오류 발생.
 - **원인:** 로그인 후 리디렉션 로직의 문제.
@@ -284,7 +286,7 @@ FTTI(Fashion-Tendency Types Indicator) 프로젝트는 머신러닝을 활용하
   주요 이슈 - 신규 유저 페이지 불러오기 오류
 </p>
 
-##### 3. [FTTI 정의](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/issues/41)
+###### 3. [FTTI 정의](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/issues/41)
 
 - **문제:** FTTI 코드 정의가 명확하지 않음.
 - **해결 방안:** FTTI 형성을 위한 스타일 비율의 경우의 수를 CSV로 정리함. 각 FTTI 코드별 설명과 스타일링 팁을 정립하여 사용자가 선택한 스타일 유형의 유사도를 비교 분석해 FTTI를 생성함.
