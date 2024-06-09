@@ -6,6 +6,16 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import tensorflow as tf
 
+'''
+File Name: mlModel.py
+Description: ComfyRide의 ML 모델을 학습하고 저장하는 파일
+Author: 김민재
+Date Created: 2024-05-09
+Last Modified by: 김민재
+Last Modified on: 2024-06-09
+Copyright (c) 2024, ComfyRide. All rights reserved.
+'''
+
 # Firebase 초기화
 cred = credentials.Certificate('Src\MLModel\ossproj-comfyride-firebase-adminsdk-f2uq6-b2aac3a165.json')
 firebase_admin.initialize_app(cred)

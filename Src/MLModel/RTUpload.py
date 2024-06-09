@@ -6,6 +6,16 @@ import firebase_admin
 from firebase_admin import credentials, storage, firestore
 import urllib.parse
 
+'''
+File Name: RTUpload.py
+Description: 실시간으로 이미지를 다운로드하고 라벨을 예측하여 Firestore에 업로드하는 파일
+Author: 김민재
+Date Created: 2024-05-09
+Last Modified by: 김민재
+Last Modified on: 2024-06-09
+Copyright (c) 2024, ComfyRide. All rights reserved.
+'''
+
 # Firebase 초기화
 cred = credentials.Certificate('Src/MLModel/ossproj-comfyride-firebase-adminsdk-f2uq6-b2aac3a165.json')
 firebase_admin.initialize_app(cred, {
@@ -92,6 +102,8 @@ def process_and_label(file_path, model):
 # Firebase Storage에서 모든 이미지 처리 및 Firestore에 결과 저장
 def process_storage_images_and_save_labels(prefix_path, collection_name):
     blobs = bucket.list_blobs(prefix=prefix_path)
+    
+    # 참고: 모델은 용량이 크므로, 로컬에서 실행 후 실행한다고 가정
     model = tf.keras.models.load_model('Src/MLModel/model.h5')
 
     for blob in blobs:
