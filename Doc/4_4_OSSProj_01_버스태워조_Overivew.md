@@ -12,6 +12,6 @@
 | 4    | 스타일 추천 화면 | Style_Recommendation.dart | [/Src/lib/screen/Style_Recommendation.dart](/Src/lib/screen/Style_Recommendation.dart) | - | 100% |
 | 5    | 찜 화면 | Cart_Screen.dart        | [/Src/lib/screen/Cart_Screen.dart](/Src/lib/screen/Cart_Screen.dart)  | -    | 100%    |
 | 6    | 오늘의 추천 화면 | today_recommendation.dart | [/Src/lib/screen/today_recommendation.dart](/Src/lib/screen/today_recommendation.dart) | -    | 100%    |
-| 6    | 데이터 라벨링 | RTUpload.py | [/Src/MLModel/RTUpload.py](/Src/MLModel/RTUpload.py) | -    | 70%    |
+| 7    | 데이터 라벨링&DB 업로드 | RTUpload.py | [/Src/MLModel/RTUpload.py](/Src/MLModel/RTUpload.py) | -    | 70%    |
 
 [👉***README로 돌아가기***](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01)

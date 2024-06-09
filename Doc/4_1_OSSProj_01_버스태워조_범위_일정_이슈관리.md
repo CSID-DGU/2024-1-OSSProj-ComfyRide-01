@@ -12,9 +12,9 @@
 
 ## 이슈 관리
 
-[Github Issues](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/issues "Issues_FTTI")
+[Github Issues](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01/issues?q=label%3Abug+ "Issues_FTTI")
 
-- 위 링크(Github Issues)으로 관리
+- 위 링크(Github Issues - label:bugs)으로 관리
 - issue마다 "문제(이슈)"라 여겨지는 것들은 label을 "bug"로 붙여 따로 관리
 
 [👉***README로 돌아가기***](https://github.com/CSID-DGU/2024-1-OSSProj-ComfyRide-01)
