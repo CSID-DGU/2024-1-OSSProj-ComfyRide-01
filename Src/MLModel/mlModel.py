@@ -5,6 +5,8 @@ from io import BytesIO
 import firebase_admin
 from firebase_admin import credentials, firestore
 import tensorflow as tf
+import concurrent.futures
+import time
 
 '''
 File Name: mlModel.py
@@ -17,7 +19,7 @@ Copyright (c) 2024, ComfyRide. All rights reserved.
 '''
 
 # Firebase 초기화
-cred = credentials.Certificate('Src\MLModel\ossproj-comfyride-firebase-adminsdk-f2uq6-b2aac3a165.json')
+cred = credentials.Certificate('Src/MLModel/ossproj-comfyride-firebase-adminsdk-f2uq6-b2aac3a165.json')
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
@@ -31,21 +33,31 @@ def download_and_preprocess_image(image_url):
     image = image / 255.0  # 정규화
     return image
 
-# Firestore에서 데이터 불러오기 및 이미지 처리
+# Firestore에서 데이터 불러오기 및 이미지 처리 (비동기 처리 추가)
 def load_data_from_firestore():
+    start_time = time.time()
     docs = db.collection('data_').stream()
     images = []
     labels = []
     label_map = {'o': 0, 'c': 1, 'f': 2}  # 라벨 매핑
 
-    for doc in docs:
+    def process_doc(doc):
         data = doc.to_dict()
         image_url = data['img']
         label = label_map[data['code']]
         image = download_and_preprocess_image(image_url)
+        return image, label
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results = list(executor.map(process_doc, docs))
+
+    for image, label in results:
         images.append(image)
         labels.append(label)
-
+    
+    end_time = time.time()
+    print(f"Data loaded in {end_time - start_time} seconds")
+    
     return np.array(images), np.array(labels)
 
 # 모델 구성 및 학습
@@ -65,5 +77,6 @@ def build_and_train_model(images, labels):
 
 # 데이터 로딩 및 모델 학습
 images, labels = load_data_from_firestore()
+print(labels)
 model = build_and_train_model(images, labels)
-model.save('Src\MLModel\model.h5')
+model.save('Src/MLModel/model.h5')
