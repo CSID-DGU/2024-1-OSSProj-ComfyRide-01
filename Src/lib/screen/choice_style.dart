@@ -107,7 +107,7 @@ class _Choice_Style extends State<Choice_Style> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: screenWidth * 0.06,
+                fontSize: screenWidth * 0.055,
               ),
             ),
             content: Text(
@@ -163,14 +163,14 @@ class _Choice_Style extends State<Choice_Style> {
                           title: Text(
                             "로그아웃",
                             style: TextStyle(
-                              fontSize: screenWidth * 0.06,
+                              fontSize: screenWidth * 0.08,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           content: Text(
                             "로그아웃 됐습니다.",
                             style: TextStyle(
-                              fontSize: screenWidth * 0.045,
+                              fontSize: screenWidth * 0.06,
                             ),
                           ),
                           actions: <Widget>[

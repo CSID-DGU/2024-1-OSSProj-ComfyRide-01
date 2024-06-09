@@ -128,14 +128,14 @@ class _MainScreenState extends State<MainScreen> {
                           title: Text(
                             "로그아웃",
                             style: TextStyle(
-                              fontSize: screenWidth * 0.06,
+                              fontSize: screenWidth * 0.045, // Context에서 직접 계산
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           content: Text(
                             "로그아웃 됐습니다.",
                             style: TextStyle(
-                              fontSize: screenWidth * 0.045,
+                              fontSize: screenWidth * 0.035, // Context에서 직접 계산
                             ),
                           ),
                           actions: <Widget>[
@@ -218,14 +218,14 @@ class _MainScreenState extends State<MainScreen> {
                           title: Text(
                             "로그아웃",
                             style: TextStyle(
-                              fontSize: screenWidth * 0.045,
+                              fontSize: screenWidth * 0.055, // Context에서 직접 계산
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           content: Text(
                             "로그아웃 됐습니다.",
                             style: TextStyle(
-                              fontSize: screenWidth * 0.035,
+                              fontSize: screenWidth * 0.045, // Context에서 직접 계산
                             ),
                           ),
                           actions: <Widget>[
